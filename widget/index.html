@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocol Risk Index — Comparison</title>
+<meta name="description" content="Transparent governance scoring for top DeFi protocols. 10 protocols mapped, methodology v0.1, schema v0.2.">
+<style>
+:root {
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #5f5e5a;
+  --color-text-tertiary: #888780;
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f4f3ee;
+  --color-background-tertiary: #fafaf7;
+  --color-border-tertiary: #d3d1c7;
+  --color-border-secondary: #b4b2a9;
+  --color-text-warning: #633806;
+  --color-background-warning: #faeeda;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--font-sans); color: var(--color-text-primary); background: var(--color-background-tertiary); padding: 2rem 1rem; line-height: 1.5; }
+.container { max-width: 1100px; margin: 0 auto; background: var(--color-background-primary); padding: 2rem 2.5rem; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); }
+.intro { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.intro h1 { font-size: 28px; font-weight: 500; margin: 0 0 6px; }
+.intro p { font-size: 14px; color: var(--color-text-secondary); margin: 0; }
+.intro a { color: var(--color-text-primary); }
+.pri-header { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 0.5px solid var(--color-border-tertiary); margin-bottom: 14px; }
+.pri-title { font-size: 18px; font-weight: 500; margin: 0; }
+.pri-meta { font-size: 12px; color: var(--color-text-tertiary); }
+.pri-row { display: grid; grid-template-columns: 200px 1fr 70px; gap: 16px; align-items: center; padding: 12px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; transition: background 0.12s; }
+.pri-row:last-child { border-bottom: none; }
+.pri-row:hover { background: var(--color-background-secondary); }
+.pri-name { font-size: 14px; font-weight: 500; margin: 0 0 3px; line-height: 1.3; }
+.pri-meta-line { font-size: 11px; color: var(--color-text-tertiary); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.pri-meta-dot { width: 2px; height: 2px; border-radius: 50%; background: var(--color-text-tertiary); }
+.pri-bars { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; align-items: end; height: 50px; }
+.pri-bar-col { display: flex; flex-direction: column; gap: 4px; height: 100%; justify-content: end; }
+.pri-bar-track { height: 32px; background: var(--color-background-secondary); border-radius: 2px; position: relative; overflow: hidden; }
+.pri-bar-fill { position: absolute; bottom: 0; left: 0; right: 0; border-radius: 2px 2px 0 0; }
+.pri-bar-label { font-size: 9px; color: var(--color-text-tertiary); text-align: center; line-height: 1; }
+.pri-composite { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.pri-composite-num { font-size: 22px; font-weight: 500; line-height: 1; }
+.pri-band { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; line-height: 1.4; }
+.pri-band-a { background: #E1F5EE; color: #04342C; }
+.pri-band-b { background: #EAF3DE; color: #173404; }
+.pri-band-c { background: #FAEEDA; color: #412402; }
+.pri-band-d { background: #FAECE7; color: #4A1B0C; }
+.pri-band-e { background: #FCEBEB; color: #501313; }
+.pri-pattern { font-size: 11px; padding: 2px 7px; border-radius: 4px; line-height: 1.4; display: inline-block; }
+.pat-token { background: #E1F5EE; color: #04342C; }
+.pat-hybrid { background: #FAEEDA; color: #412402; }
+.pat-advisory { background: #FAECE7; color: #4A1B0C; }
+.pat-multisig { background: #EEEDFE; color: #26215C; }
+.pri-detail { display: none; padding: 10px 0 4px 200px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.55; }
+.pri-detail.open { display: block; }
+.pri-detail ul { margin: 0; padding-left: 16px; }
+.pri-detail li { margin-bottom: 4px; }
+.pri-cat-header { display: grid; grid-template-columns: 200px 1fr 70px; gap: 16px; padding: 0 0 8px; font-size: 10px; color: var(--color-text-tertiary); text-transform: lowercase; letter-spacing: 0.5px; }
+.pri-cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center; }
+.pri-warn { display: inline-block; font-size: 10px; padding: 1px 5px; border-radius: 3px; background: var(--color-background-warning); color: var(--color-text-warning); margin-left: 6px; }
+.pri-controls { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.pri-sort { font-size: 11px; padding: 4px 10px; border: 0.5px solid var(--color-border-tertiary); border-radius: 4px; background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: inherit; }
+.pri-sort.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-secondary); }
+.pri-summary { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 16px; }
+.pri-summary-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; text-align: center; }
+.pri-summary-band { font-size: 14px; font-weight: 500; line-height: 1; margin-bottom: 4px; }
+.pri-summary-count { font-size: 20px; font-weight: 500; line-height: 1.2; }
+.pri-summary-label { font-size: 10px; color: var(--color-text-tertiary); margin-top: 2px; }
+.pri-footer { margin-top: 18px; padding-top: 14px; border-top: 0.5px solid var(--color-border-tertiary); font-size: 11px; color: var(--color-text-tertiary); line-height: 1.6; }
+.pri-footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pri-footer h4 { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin: 0 0 6px; text-transform: lowercase; letter-spacing: 0.5px; }
+.pri-footer ul { margin: 0; padding-left: 14px; list-style: none; padding-left: 0; }
+@media (max-width: 700px) {
+  .container { padding: 1.5rem 1rem; }
+  .pri-row { grid-template-columns: 130px 1fr 60px; gap: 8px; }
+  .pri-detail { padding-left: 130px; }
+  .pri-cat-header { grid-template-columns: 130px 1fr 60px; gap: 8px; }
+  .pri-footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="intro">
+    <h1>DeFi Protocol Risk Index</h1>
+    <p>Transparent governance scoring for top DeFi protocols. 10 protocols mapped against methodology v0.1, verified on-chain April 2026. <a href="https://github.com/gopikannappan/DeFi-PRI">Source on GitHub →</a></p>
+  </div>
+
+  <div class="pri-header">
+    <div>
+      <p class="pri-title">Protocol risk index — full comparison</p>
+      <p class="pri-meta">methodology v0.1 · schema v0.2 · 10 protocols mapped</p>
+    </div>
+    <div class="pri-meta">click row for details</div>
+  </div>
+
+  <div class="pri-summary">
+    <div class="pri-summary-card"><div class="pri-summary-band" style="color: #04342C;">A</div><div class="pri-summary-count">2</div><div class="pri-summary-label">85–100</div></div>
+    <div class="pri-summary-card"><div class="pri-summary-band" style="color: #173404;">B</div><div class="pri-summary-count">3</div><div class="pri-summary-label">70–84</div></div>
+    <div class="pri-summary-card"><div class="pri-summary-band" style="color: #412402;">C</div><div class="pri-summary-count">2</div><div class="pri-summary-label">55–69</div></div>
+    <div class="pri-summary-card"><div class="pri-summary-band" style="color: #4A1B0C;">D</div><div class="pri-summary-count">3</div><div class="pri-summary-label">40–54</div></div>
+    <div class="pri-summary-card"><div class="pri-summary-band" style="color: #501313;">E</div><div class="pri-summary-count">0</div><div class="pri-summary-label">0–39</div></div>
+  </div>
+
+  <div class="pri-controls">
+    <button class="pri-sort active" data-sort="score">By score</button>
+    <button class="pri-sort" data-sort="chain">By chain</button>
+    <button class="pri-sort" data-sort="category">By category</button>
+    <button class="pri-sort" data-sort="pattern">By pattern</button>
+  </div>
+
+  <div class="pri-cat-header">
+    <div>protocol</div>
+    <div class="pri-cat-grid">
+      <div>govern.<br>binding</div>
+      <div>time<br>buffer</div>
+      <div>authority<br>distrib.</div>
+      <div>emergency<br>design</div>
+      <div>code<br>mutability</div>
+    </div>
+    <div style="text-align: right;">composite</div>
+  </div>
+
+  <div id="pri-rows"></div>
+
+  <div class="pri-footer">
+    <div class="pri-footer-grid">
+      <div>
+        <h4>governance pattern</h4>
+        <ul>
+          <li><span class="pri-pattern pat-token">token-bound DAO</span> on-chain vote binds protocol action — 5 protocols</li>
+          <li><span class="pri-pattern pat-multisig">multisig only</span> no DAO yet — 1 protocol</li>
+          <li><span class="pri-pattern pat-hybrid">hybrid</span> some on-chain, some multisig — 3 protocols</li>
+          <li><span class="pri-pattern pat-advisory">advisory + multisig</span> DAO is signaling only — 1 protocol</li>
+        </ul>
+      </div>
+      <div>
+        <h4>verification status</h4>
+        <p style="margin: 0 0 8px;">All 10 protocols verified against on-chain state in April 2026. Multisig configurations, timelock delays, role assignments, and proxy admin slots read directly from public RPCs.</p>
+        <p style="margin: 0;">Methodology, scoring rubric, and verification scripts: <a href="https://github.com/gopikannappan/DeFi-PRI">github.com/gopikannappan/DeFi-PRI</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const protocols = [
+  { slug: 'curve', name: 'Curve', chain: 'Ethereum', category: 'DEX', pattern: 'token_bound_dao', composite: 90, band: 'A', scores: [85, 100, 75, 85, 100], verified: true,
+    keyFacts: ['Pools are immutable; only proxies/factories upgradeable', 'Three Aragon Agents with separation of powers', 'kill_pool() does NOT trap user funds', '~10-day effective delay (1-week vote + 3-day per-pool admin delay)']
+  },
+  { slug: 'lido', name: 'Lido', chain: 'Ethereum', category: 'LST', pattern: 'token_bound_dao', composite: 88, band: 'A', scores: [85, 100, 95, 65, 85], verified: true,
+    keyFacts: ['Dual Governance: 3-day minimum, dynamically extensible up to 45+ days', 'GateSeal: one-shot 11-day pause', 'DSM uses asymmetric thresholds: 1-of-N pause, ~2/3 to allow', 'Significant off-chain trust surface not scored']
+  },
+  { slug: 'uniswap', name: 'Uniswap', chain: 'Ethereum', category: 'DEX', pattern: 'token_bound_dao', composite: 84, band: 'B', scores: [85, 60, 85, 100, 100], verified: true,
+    keyFacts: ['Core contracts are immutable', 'Governance changes only fee tiers and protocol fee setter', '2-day timelock on the only privileged actions', 'No emergency controls exist']
+  },
+  { slug: 'aave', name: 'Aave', chain: 'Ethereum', category: 'Lending', pattern: 'token_bound_dao', composite: 82, band: 'B', scores: [85, 100, 83, 45, 85], verified: true,
+    keyFacts: ['Tiered 1d/7d executors — protocol upgrades take 7 days', 'Two 5/9 Guardian multisigs', 'ACL Manager with 7+ distinct privileged roles', 'Pause stops withdrawals temporarily']
+  },
+  { slug: 'sky', name: 'Sky (formerly Maker)', chain: 'Ethereum', category: 'Stablecoin', pattern: 'token_bound_dao', composite: 81, band: 'B', scores: [85, 60, 95, 85, 85], verified: true,
+    keyFacts: ['Most purely token-bound DAO mapped — no multisig in critical upgrade path', '24-hour Pause delay — non-bypassable', 'Emergency Shutdown DEACTIVATED in May 2025', 'SubDAO architecture (Spark, Grove)']
+  },
+  { slug: 'eigenlayer', name: 'EigenLayer', chain: 'Ethereum', category: 'Restaking', pattern: 'multisig_only', composite: 65, band: 'C', scores: [30, 90, 90, 35, 65], verified: true,
+    keyFacts: ['Verified role separation: Operations (PROPOSER+CANCELLER), Protocol Council (PROPOSER+EXECUTOR), Community (TIMELOCK_ADMIN)', '10-day primary timelock; 24-day timelock on bEIGEN', 'Asymmetric PauserRegistry: 1-of-9 pause, multisig consensus to unpause', 'Community Multisig 9/13 can replace timelock for key-compromise']
+  },
+  { slug: 'gmx', name: 'GMX', chain: 'Arbitrum', category: 'Derivatives', pattern: 'multisig_with_advisory_dao', composite: 58, band: 'C', scores: [45, 40, 83, 70, 60], verified: true,
+    keyFacts: ['Snapshot voting is advisory only — actual on-chain authority is multisig', 'TWO Safes hold TIMELOCK_ADMIN: 5/8 and 4/6', 'Cross-multisig signer overlap detected (one signer in both)', '12-hour timelock — below 48h industry threshold']
+  },
+  { slug: 'jito', name: 'Jito', chain: 'Solana', category: 'LST', pattern: 'hybrid', composite: 52, band: 'D', scores: [60, 0, 83, 100, 40], verified: true,
+    keyFacts: ['Verified: SPL Stake Pool Program upgrade authority is Squads V3 6-of-10 with 10 distinct signers', 'Pool manager is program-controlled (PDA)', 'JTO Realms DAO governs strategic decisions', 'JitoSOL is non-custodial — withdrawals always possible']
+  },
+  { slug: 'pendle', name: 'Pendle', chain: 'Ethereum', category: 'Yield', pattern: 'hybrid', composite: 50, band: 'D', scores: [60, 0, 75, 100, 40], verified: true,
+    keyFacts: ['Verified: Pendle owner Safe at 0x8119EC16..., 3-of-5 (ratio 0.60)', 'Hybrid: vePENDLE binds incentive direction; multisig binds protocol upgrades', 'Individual yield markets are immutable', 'Cross-chain (4 chains) — per-chain admin separation']
+  },
+  { slug: 'jupiter', name: 'Jupiter Aggregator', chain: 'Solana', category: 'DEX', pattern: 'hybrid', composite: 47, band: 'D', scores: [60, 0, 68, 100, 30], verified: true,
+    keyFacts: ['Verified: Squads V3 multisig 4-of-7 (vault PDA = on-chain upgrade authority)', 'JUP DAO governs treasury and launchpad — NOT program upgrades', 'Squads V3 has no native timelock — confirmed instant upgrade capability', 'Aggregator is stateless — actual blast radius limited']
+  }
+];
+
+const bandClass = b => 'pri-band-' + b.toLowerCase();
+const patternClass = p => p === 'token_bound_dao' ? 'pat-token' : p === 'hybrid' ? 'pat-hybrid' : p === 'multisig_only' ? 'pat-multisig' : 'pat-advisory';
+const patternLabel = p => p === 'token_bound_dao' ? 'token-bound DAO' : p === 'hybrid' ? 'hybrid' : p === 'multisig_only' ? 'multisig only' : 'advisory + multisig';
+
+function barColor(v) {
+  if (v >= 80) return '#185FA5';
+  if (v >= 60) return '#378ADD';
+  if (v >= 40) return '#85B7EB';
+  if (v >= 20) return '#B5D4F4';
+  return '#E6F1FB';
+}
+
+function render(sortBy) {
+  let rows = [...protocols];
+  if (sortBy === 'score') rows.sort((a, b) => b.composite - a.composite);
+  if (sortBy === 'chain') rows.sort((a, b) => a.chain.localeCompare(b.chain) || b.composite - a.composite);
+  if (sortBy === 'category') rows.sort((a, b) => a.category.localeCompare(b.category) || b.composite - a.composite);
+  if (sortBy === 'pattern') {
+    const order = { token_bound_dao: 0, hybrid: 1, multisig_only: 2, multisig_with_advisory_dao: 3 };
+    rows.sort((a, b) => order[a.pattern] - order[b.pattern] || b.composite - a.composite);
+  }
+
+  const html = rows.map((p, i) => {
+    const bars = p.scores.map(s => {
+      const h = Math.round(s * 32 / 100);
+      return '<div class="pri-bar-col"><div class="pri-bar-track"><div class="pri-bar-fill" style="height: ' + h + 'px; background: ' + barColor(s) + ';"></div></div><div class="pri-bar-label">' + Math.round(s) + '</div></div>';
+    }).join('');
+
+    const facts = p.keyFacts.map(f => '<li>' + f + '</li>').join('');
+
+    return '<div class="pri-row" data-idx="' + i + '">' +
+        '<div>' +
+          '<p class="pri-name">' + p.name + '</p>' +
+          '<div class="pri-meta-line">' +
+            '<span>' + p.chain + '</span>' +
+            '<span class="pri-meta-dot"></span>' +
+            '<span>' + p.category + '</span>' +
+          '</div>' +
+          '<div style="margin-top: 4px;"><span class="pri-pattern ' + patternClass(p.pattern) + '">' + patternLabel(p.pattern) + '</span></div>' +
+        '</div>' +
+        '<div class="pri-bars">' + bars + '</div>' +
+        '<div class="pri-composite">' +
+          '<div class="pri-composite-num">' + Math.round(p.composite) + '</div>' +
+          '<span class="pri-band ' + bandClass(p.band) + '">' + p.band + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pri-detail" data-detail="' + i + '">' +
+        '<ul>' + facts + '</ul>' +
+      '</div>';
+  }).join('');
+
+  document.getElementById('pri-rows').innerHTML = html;
+
+  document.querySelectorAll('.pri-row').forEach(r => {
+    r.addEventListener('click', () => {
+      const idx = r.getAttribute('data-idx');
+      const detail = document.querySelector('[data-detail="' + idx + '"]');
+      detail.classList.toggle('open');
+    });
+  });
+}
+
+document.querySelectorAll('.pri-sort').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.pri-sort').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    render(b.getAttribute('data-sort'));
+  });
+});
+
+render('score');
+</script>
+</body>
+</html>

@@ -85,8 +85,8 @@ scores.json                 Pre-computed scores for v0.1 release
 ## Reproducing the scores
 
 ```bash
-git clone https://github.com/your-handle/protocol-risk-index
-cd protocol-risk-index
+git clone https://github.com/gopikannappan/DeFi-PRI
+cd DeFi-PRI
 
 # Validate that all protocol JSONs conform to the schema
 pip install jsonschema
