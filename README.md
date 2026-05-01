@@ -1,5 +1,7 @@
 # DeFi Protocol Risk Index (DPRI)
 
+![DPRI v0.1 — 10 protocols ranked by composite governance score](./assets/dpri-social-preview.png)
+
 A transparent, reproducible scoring methodology for DeFi protocol governance.
 
 DPRI maps the **on-chain governance trust model** of major DeFi protocols and produces a comparable risk score from observable contract state. The methodology is published. The data is published. Every score in this repo can be reproduced from the JSON plus the methodology document.
@@ -33,7 +35,7 @@ Methodology in [`methodology/scoring-v0.1.md`](methodology/scoring-v0.1.md). Per
 
 These are different trust models. They should not produce the same risk score.
 
-PRI separates them into four categories and grades each protocol on five sub-dimensions:
+DPRI separates them into four categories and grades each protocol on five sub-dimensions:
 
 - **Governance binding** — does token voting actually constrain on-chain action, or is it advisory?
 - **Time buffer** — how much time exists between a malicious decision and irreversible execution?
@@ -76,6 +78,12 @@ scripts/                    Reproduce, verify, validate
 
 findings/                   Per-protocol research notes (subset)
   aave.md, curve.md, gmx.md, lido.md
+
+widget/                     Standalone HTML for GitHub Pages
+  index.html
+
+assets/                     Repo images (social preview, etc.)
+  dpri-social-preview.png
 
 scores.json                 Pre-computed scores for v0.1 release
 ```
@@ -132,7 +140,7 @@ DPRI is one signal among several. It does not score:
 
 - **Code quality.** A protocol with great governance can still have exploitable bugs. Audits are a separate domain.
 - **Economic security.** Liquidity, liquidation engines, peg stability, oracle robustness are out of scope.
-- **Token distribution.** Voter turnout, whale concentration, and governance attack economics are downstream of the structures PRI maps but not directly scored.
+- **Token distribution.** Voter turnout, whale concentration, and governance attack economics are downstream of the structures DPRI maps but not directly scored.
 - **Off-chain trust surface.** Validator keys, oracle infrastructure, daemon software, MPC custody arrangements. These are noted in the JSONs where significant (Lido, GMX, Jupiter, Jito) but not scored in v0.1.
 - **Track record.** Time in market and incident history are protocol metadata, not scored.
 - **MEV and liveness properties.** Out of scope.
@@ -213,4 +221,4 @@ DPRI is opinionated where these are general, transparent where they are partial,
 
 ## Author
 
-By Gopi Kannappan. Reach me at (https://x.com/gopikannappan).
+By Gopi Kannappan. Founder, @bitsCrunch (2021–2026). Currently building DEX execution infrastructure that uses governance-aware routing — DPRI is the dataset that makes that possible. Reach me at [@gopikannappan](https://x.com/gopikannappan).

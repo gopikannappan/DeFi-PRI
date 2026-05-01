@@ -1,6 +1,6 @@
 {
   "identity": {
-    "slug": "jupiter-aggregator",
+    "slug": "jupiter",
     "name": "Jupiter Aggregator V6",
     "category": "dex",
     "parent_protocol": "jupiter",

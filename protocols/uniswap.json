@@ -1,6 +1,6 @@
 {
   "identity": {
-    "slug": "uniswap-v3",
+    "slug": "uniswap",
     "name": "Uniswap V3",
     "category": "dex",
     "primary_chain": "ethereum",

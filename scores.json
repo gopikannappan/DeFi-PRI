@@ -87,8 +87,8 @@
       "band_label": "Mature governance, low operational risk"
     },
     {
-      "slug": "uniswap-v3",
-      "display_name": "Uniswap V3",
+      "slug": "uniswap",
+      "display_name": "Uniswap",
       "category": "DEX",
       "chain": "Ethereum",
       "governance_pattern": "token_bound_dao",
@@ -111,8 +111,8 @@
       "band_label": "Solid governance with notable trade-offs"
     },
     {
-      "slug": "aave-v3",
-      "display_name": "Aave V3 (Main)",
+      "slug": "aave",
+      "display_name": "Aave",
       "category": "Lending",
       "chain": "Ethereum",
       "governance_pattern": "token_bound_dao",
@@ -135,7 +135,7 @@
       "band_label": "Solid governance with notable trade-offs"
     },
     {
-      "slug": "sky-protocol",
+      "slug": "sky",
       "display_name": "Sky (formerly Maker)",
       "category": "Stablecoin",
       "chain": "Ethereum",
@@ -183,8 +183,8 @@
       "band_label": "Functional but with material centralization or risk"
     },
     {
-      "slug": "gmx-v2",
-      "display_name": "GMX V2",
+      "slug": "gmx",
+      "display_name": "GMX",
       "category": "Derivatives",
       "chain": "Arbitrum",
       "governance_pattern": "multisig_with_advisory_dao",
@@ -231,8 +231,8 @@
       "band_label": "Weak governance, significant trust assumptions"
     },
     {
-      "slug": "pendle-v2",
-      "display_name": "Pendle V2",
+      "slug": "pendle",
+      "display_name": "Pendle",
       "category": "Yield",
       "chain": "Ethereum",
       "governance_pattern": "hybrid",
@@ -255,8 +255,8 @@
       "band_label": "Weak governance, significant trust assumptions"
     },
     {
-      "slug": "jupiter-aggregator",
-      "display_name": "Jupiter Aggregator V6",
+      "slug": "jupiter",
+      "display_name": "Jupiter Aggregator",
       "category": "DEX",
       "chain": "Solana",
       "governance_pattern": "hybrid",

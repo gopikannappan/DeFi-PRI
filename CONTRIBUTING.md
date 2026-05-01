@@ -1,4 +1,4 @@
-# Contributing to PRI
+# Contributing to DPRI
 
 PRs welcome. This is research, not a service — there's no SLA on issue response, but legitimate corrections and additions get merged.
 

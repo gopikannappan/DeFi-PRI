@@ -1,0 +1,45 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>DeFi Protocol Risk Index v0.1 — transparent governance scoring for 10 top DeFi protocols</title>
+  <desc>Social preview image showing the project name, key finding (51-point spread across 10 protocols), and band distribution.</desc>
+
+  <rect x="0" y="0" width="1280" height="640" fill="#FAFAF7"/>
+
+  <line x1="80" y1="80" x2="1200" y2="80" stroke="#D3D1C7" stroke-width="0.5"/>
+
+  <text x="80" y="64" font-size="14" font-weight="500" fill="#888780" letter-spacing="2" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">DEFI PROTOCOL RISK INDEX · V0.1</text>
+
+  <text x="80" y="180" font-size="68" font-weight="500" fill="#1A1A1A" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">"DAO-governed"</text>
+  <text x="80" y="260" font-size="68" font-weight="500" fill="#1A1A1A" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">means four different things.</text>
+
+  <text x="80" y="340" font-size="22" font-weight="400" fill="#5F5E5A" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">10 top DeFi protocols, mapped against a transparent</text>
+  <text x="80" y="372" font-size="22" font-weight="400" fill="#5F5E5A" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">governance scoring methodology. Verified on-chain.</text>
+
+  <g transform="translate(80, 440)">
+    <rect x="0" y="0" width="200" height="70" rx="8" fill="#E1F5EE"/>
+    <text x="20" y="30" font-size="13" font-weight="500" fill="#04342C" letter-spacing="1" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">BAND A · 85–100</text>
+    <text x="20" y="60" font-size="32" font-weight="500" fill="#04342C" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">2 protocols</text>
+  </g>
+
+  <g transform="translate(290, 440)">
+    <rect x="0" y="0" width="200" height="70" rx="8" fill="#EAF3DE"/>
+    <text x="20" y="30" font-size="13" font-weight="500" fill="#173404" letter-spacing="1" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">BAND B · 70–84</text>
+    <text x="20" y="60" font-size="32" font-weight="500" fill="#173404" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">3 protocols</text>
+  </g>
+
+  <g transform="translate(500, 440)">
+    <rect x="0" y="0" width="200" height="70" rx="8" fill="#FAEEDA"/>
+    <text x="20" y="30" font-size="13" font-weight="500" fill="#412402" letter-spacing="1" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">BAND C · 55–69</text>
+    <text x="20" y="60" font-size="32" font-weight="500" fill="#412402" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">2 protocols</text>
+  </g>
+
+  <g transform="translate(710, 440)">
+    <rect x="0" y="0" width="200" height="70" rx="8" fill="#FAECE7"/>
+    <text x="20" y="30" font-size="13" font-weight="500" fill="#4A1B0C" letter-spacing="1" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">BAND D · 40–54</text>
+    <text x="20" y="60" font-size="32" font-weight="500" fill="#4A1B0C" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">3 protocols</text>
+  </g>
+
+  <line x1="80" y1="560" x2="1200" y2="560" stroke="#D3D1C7" stroke-width="0.5"/>
+
+  <text x="80" y="592" font-size="15" font-weight="400" fill="#5F5E5A" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">github.com/gopikannappan/DeFi-PRI</text>
+  <text x="1200" y="592" font-size="15" font-weight="400" fill="#888780" text-anchor="end" font-family="-apple-system, system-ui, 'Segoe UI', Roboto, sans-serif">methodology v0.1 · CC0 + MIT · April 2026</text>
+</svg>

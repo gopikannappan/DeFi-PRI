@@ -1,6 +1,6 @@
 {
   "identity": {
-    "slug": "aave-v3",
+    "slug": "aave",
     "name": "Aave V3 (Ethereum Main Market)",
     "category": "lending",
     "primary_chain": "ethereum",

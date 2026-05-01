@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Resolve verification gaps in PRI protocol JSONs by querying public RPCs.
+Resolve verification gaps in DPRI protocol JSONs by querying public RPCs.
 
 For each TBD address or null field, attempt to resolve via on-chain reads.
 Outputs verification_results.json with confirmed values and discrepancies.

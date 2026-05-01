@@ -204,7 +204,7 @@ If results differ by more than 1 point, file an issue. Scoring should be determi
 
 ## Versioning
 
-v0.1 — initial publication, 6 protocols mapped (Uniswap V3, Aave V3, Curve, Lido, GMX V2, Jupiter Aggregator).
+v0.1 — initial publication, 10 protocols mapped (Uniswap V3, Aave V3, Curve, Lido, GMX V2, Jupiter Aggregator, EigenLayer, Pendle, Jito, Sky/MakerDAO).
 
 Future versions:
 - v0.2 expected when schema bumps to v0.3 with `governance_binding`, `trust_surface[]`, asymmetric multisig fields

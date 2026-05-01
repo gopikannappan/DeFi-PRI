@@ -34,8 +34,8 @@ def band_label(b):
 
 
 # Original 6 protocols
-uniswap_v3 = {
-    "slug": "uniswap-v3", "display_name": "Uniswap V3", "category": "DEX", "chain": "Ethereum",
+uniswap = {
+    "slug": "uniswap", "display_name": "Uniswap", "category": "DEX", "chain": "Ethereum",
     "governance_pattern": "token_bound_dao",
     "scores": {"governance_binding": 85, "time_buffer": 60, "authority_distribution": 85, "emergency_design": 100, "code_mutability": 100},
     "key_facts": [
@@ -47,8 +47,8 @@ uniswap_v3 = {
     "verified": True,
 }
 
-aave_v3 = {
-    "slug": "aave-v3", "display_name": "Aave V3 (Main)", "category": "Lending", "chain": "Ethereum",
+aave = {
+    "slug": "aave", "display_name": "Aave", "category": "Lending", "chain": "Ethereum",
     "governance_pattern": "token_bound_dao",
     "scores": {"governance_binding": 85, "time_buffer": 100, "authority_distribution": 83, "emergency_design": 45, "code_mutability": 85},
     "key_facts": [
@@ -86,8 +86,8 @@ lido = {
     "verified": True,
 }
 
-gmx_v2 = {
-    "slug": "gmx-v2", "display_name": "GMX V2", "category": "Derivatives", "chain": "Arbitrum",
+gmx = {
+    "slug": "gmx", "display_name": "GMX", "category": "Derivatives", "chain": "Arbitrum",
     "governance_pattern": "multisig_with_advisory_dao",
     "scores": {"governance_binding": 45, "time_buffer": 40, "authority_distribution": 83, "emergency_design": 70, "code_mutability": 60},
     "key_facts": [
@@ -99,8 +99,8 @@ gmx_v2 = {
     "verified": True,
 }
 
-jupiter_aggregator = {
-    "slug": "jupiter-aggregator", "display_name": "Jupiter Aggregator V6", "category": "DEX", "chain": "Solana",
+jupiter = {
+    "slug": "jupiter", "display_name": "Jupiter Aggregator", "category": "DEX", "chain": "Solana",
     "governance_pattern": "hybrid",
     "scores": {"governance_binding": 60, "time_buffer": 0, "authority_distribution": 68, "emergency_design": 100, "code_mutability": 30},
     "key_facts": [
@@ -126,8 +126,8 @@ eigenlayer = {
     "verified": True,
 }
 
-pendle_v2 = {
-    "slug": "pendle-v2", "display_name": "Pendle V2", "category": "Yield", "chain": "Ethereum",
+pendle = {
+    "slug": "pendle", "display_name": "Pendle", "category": "Yield", "chain": "Ethereum",
     "governance_pattern": "hybrid",
     "scores": {"governance_binding": 60, "time_buffer": 0, "authority_distribution": 75, "emergency_design": 100, "code_mutability": 40},
     "key_facts": [
@@ -152,8 +152,8 @@ jito = {
     "verified": True,
 }
 
-sky_protocol = {
-    "slug": "sky-protocol", "display_name": "Sky (formerly Maker)", "category": "Stablecoin", "chain": "Ethereum",
+sky = {
+    "slug": "sky", "display_name": "Sky (formerly Maker)", "category": "Stablecoin", "chain": "Ethereum",
     "governance_pattern": "token_bound_dao",
     "scores": {"governance_binding": 85, "time_buffer": 60, "authority_distribution": 95, "emergency_design": 85, "code_mutability": 85},
     "key_facts": [
@@ -176,8 +176,7 @@ def compute_composite(p):
 
 
 protocols = [compute_composite(p) for p in [
-    uniswap_v3, aave_v3, curve, lido, gmx_v2, jupiter_aggregator,
-    eigenlayer, pendle_v2, jito, sky_protocol,
+    uniswap, aave, curve, lido, gmx, jupiter, eigenlayer, pendle, jito, sky,
 ]]
 
 protocols_sorted = sorted(protocols, key=lambda p: -p["composite_score"])

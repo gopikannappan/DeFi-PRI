@@ -1,6 +1,6 @@
 {
   "identity": {
-    "slug": "sky-protocol",
+    "slug": "sky",
     "name": "Sky (formerly MakerDAO)",
     "category": "stablecoin",
     "parent_protocol": null,
@@ -166,7 +166,7 @@
     "_governance_observation": "Sky/Maker is the cleanest token-bound DAO of any protocol mapped. NO multisig is in the critical upgrade path. SKY holders directly elect executors via Chief approval voting. The 24-hour Pause delay is non-bypassable. Emergency Shutdown was deliberately disabled in May 2025, removing the only fast-response mechanism. The trade-off this represents \u2014 strongest governance integrity vs. slowest emergency response \u2014 is a major dashboard finding.",
     "_governance_binding_for_dashboard": "token_bound_dao \u2014 fifth confirmation. Sky is the strongest example. Other token-bound DAOs (Aave, Curve, Lido, Uniswap) all have multisig elements (guardian multisigs, emergency executors, custodian multisigs) somewhere in the trust chain. Sky has none.",
     "_v0_3_candidates_observation": "Sky introduces a new pattern worth flagging: deactivated_emergency_capability. Previously had ESM, deliberately disabled. The schema's existing is_one_shot/expires_at fields don't capture 'governance disabled this' \u2014 a v0.3 emergency_status enum would. Lower priority than the already-locked candidates; can wait for v0.4.",
-    "_subdao_architecture_note": "Sky uses SubDAO architecture (Spark, Grove, others planned). Each SubDAO has operational autonomy via dedicated Proxy contracts but ultimate authorization flows through main Sky Chief. This is structurally similar to Aave V3's market_id pattern (which v0.2 added) \u2014 Spark could be modeled as a child record with parent_protocol='sky-protocol' and market_id='spark'. Worth doing if/when Spark is mapped separately.",
+    "_subdao_architecture_note": "Sky uses SubDAO architecture (Spark, Grove, others planned). Each SubDAO has operational autonomy via dedicated Proxy contracts but ultimate authorization flows through main Sky Chief. This is structurally similar to Aave V3's market_id pattern (which v0.2 added) \u2014 Spark could be modeled as a child record with parent_protocol='sky' and market_id='spark'. Worth doing if/when Spark is mapped separately.",
     "_lessons_from_endgame_transition": "Sky completed major architectural changes in 2024-2025: (1) MKR \u2192 SKY token at 1:24,000 ratio, (2) DAI \u2192 USDS rebrand with cross-chain Solana deployment, (3) ESM disabled, (4) New Chief contract launched, (5) MKR Flop auctions disabled, (6) Multiple SubDAOs spun up with their own governance. The dashboard should reflect that protocols can undergo MAJOR governance changes that materially alter their risk profile. Sky's score today is meaningfully different from Sky's score in 2023 (which still had ESM and DAI as primary stablecoin).",
     "sources": [
       {
