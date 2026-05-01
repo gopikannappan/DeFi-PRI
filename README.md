@@ -221,4 +221,7 @@ DPRI is opinionated where these are general, transparent where they are partial,
 
 ## Author
 
-By Gopi Kannappan. Founder, @bitsCrunch (2021–2026). Currently building DEX execution infrastructure that uses governance-aware routing — DPRI is the dataset that makes that possible. Reach me at [@gopikannappan](https://x.com/gopikannappan).
+By Gopi Kannappan
+Building DeFi and Privacy products
+Ex-Co-Founder, @bitsCrunch (backed by Coinbase Ventures, Chainlink, Animoca, Polygon)
+Reach me at [@gopikannappan](https://x.com/gopikannappan).
