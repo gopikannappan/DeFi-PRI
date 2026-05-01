@@ -1,0 +1,206 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/gopikannappan/DeFi-PRI/schema/governance-graph-v0.2.json",
+  "title": "Protocol Governance Graph",
+  "type": "object",
+  "required": ["identity", "admin_surface", "upgrade_paths", "meta"],
+  "properties": {
+    "identity": {
+      "type": "object",
+      "required": ["slug", "name", "category", "chains", "primary_chain"],
+      "properties": {
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "name": { "type": "string" },
+        "category": {
+          "type": "string",
+          "enum": ["dex", "lending", "lst", "restaking", "derivatives", "yield", "bridge", "stablecoin"]
+        },
+        "parent_protocol": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9-]+$",
+          "description": "v0.2: When a protocol has multiple distinct markets/sub-systems with separate admin surfaces (e.g. Aave V3 Main vs Prime, Curve AMM vs crvUSD), each gets its own slug and references the parent here. Null for single-market protocols."
+        },
+        "market_id": {
+          "type": ["string", "null"],
+          "description": "v0.2: Human-readable identifier for the specific market within parent_protocol (e.g. 'main', 'prime', 'lido', 'crvusd'). Null when parent_protocol is null."
+        },
+        "chains": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/chain" }
+        },
+        "primary_chain": { "type": "string" },
+        "website": { "type": "string", "format": "uri" },
+        "docs": { "type": "string", "format": "uri" }
+      }
+    },
+    "tvl_context": {
+      "type": "object",
+      "properties": {
+        "tvl_usd": { "type": ["number", "null"] },
+        "tvl_source": { "type": "string" },
+        "as_of": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "admin_surface": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/admin_role" }
+    },
+    "upgrade_paths": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/upgrade_path" }
+    },
+    "emergency_controls": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/emergency_control" }
+    },
+    "timelocks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/timelock" }
+    },
+    "oracles": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/oracle" }
+    },
+    "meta": {
+      "type": "object",
+      "required": ["schema_version", "last_indexed_block"],
+      "properties": {
+        "schema_version": { "type": "string" },
+        "last_indexed_block": { "type": "object" },
+        "last_full_audit": { "type": ["string", "null"], "format": "date-time" },
+        "sources": { "type": "array" }
+      }
+    }
+  },
+  "definitions": {
+    "chain": {
+      "type": "object",
+      "required": ["chain_id", "contracts"],
+      "properties": {
+        "chain_id": { "type": "string" },
+        "deployment_block": { "type": ["integer", "null"] },
+        "contracts": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "admin_role": {
+      "type": "object",
+      "required": ["role", "scope", "controller_type", "controller"],
+      "properties": {
+        "role": { "type": "string" },
+        "scope": { "type": "string" },
+        "controller_type": {
+          "type": "string",
+          "enum": ["eoa", "multisig", "timelock", "dao", "program_authority", "role_based", "immutable"]
+        },
+        "controller": {
+          "type": "object",
+          "properties": {
+            "address": { "type": "string" },
+            "chain": { "type": "string" },
+            "multisig": {
+              "type": ["object", "null"],
+              "properties": {
+                "kind": { "type": "string", "enum": ["gnosis_safe", "squads", "custom"] },
+                "threshold": { "type": ["integer", "null"], "minimum": 1 },
+                "signers": { "type": ["array", "null"], "items": { "type": "string" } },
+                "signer_count": { "type": ["integer", "null"], "minimum": 1 }
+              }
+            },
+            "timelock": {
+              "type": ["object", "null"],
+              "properties": {
+                "delay_seconds": { "type": ["integer", "null"], "minimum": 0 },
+                "proposer_role": { "type": "string" },
+                "executor_role": { "type": "string" },
+                "canceller_role": { "type": "string" },
+                "can_bypass": { "type": "boolean" }
+              }
+            },
+            "dao": {
+              "type": ["object", "null"],
+              "properties": {
+                "kind": { "type": "string", "enum": ["governor_bravo", "aragon", "snapshot_executor", "realms", "custom"] },
+                "voting_token": { "type": "string" },
+                "quorum": { "type": "string" },
+                "voting_delay_blocks": { "type": "integer" },
+                "voting_period_blocks": { "type": "integer" },
+                "proposal_threshold": { "type": "string" }
+              }
+            },
+            "program_authority": {
+              "type": ["object", "null"],
+              "properties": {
+                "authority": { "type": "string" },
+                "is_immutable": { "type": "boolean" },
+                "upgrade_authority_set": { "type": "boolean" }
+              }
+            }
+          }
+        },
+        "last_changed_block": { "type": ["integer", "null"] },
+        "last_changed_tx": { "type": ["string", "null"] }
+      }
+    },
+    "upgrade_path": {
+      "type": "object",
+      "required": ["mechanism"],
+      "properties": {
+        "mechanism": {
+          "type": "string",
+          "enum": ["eip1967_proxy", "beacon", "diamond", "program_upgrade", "immutable", "transparent_proxy", "uups"]
+        },
+        "proxy": { "type": ["string", "null"] },
+        "implementation": { "type": ["string", "null"] },
+        "admin": { "type": "string" },
+        "delay_seconds": { "type": ["integer", "null"] },
+        "guarded_by_dao": { "type": "boolean" }
+      }
+    },
+    "emergency_control": {
+      "type": "object",
+      "required": ["function", "contract", "caller"],
+      "properties": {
+        "function": { "type": "string" },
+        "contract": { "type": "string" },
+        "caller": { "type": "string" },
+        "scope": { "type": "string" },
+        "can_freeze_user_funds": { "type": "boolean" },
+        "has_timelock": { "type": "boolean" },
+        "is_one_shot": {
+          "type": "boolean",
+          "description": "v0.2: True if this emergency capability fires once and is consumed (e.g. Lido GateSeal, older Curve pool kill_deadline). Strong positive signal for risk scoring — capability cannot be repeatedly abused."
+        },
+        "expires_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "v0.2: ISO timestamp after which this emergency capability is no longer callable. Null if non-expiring. Combined with is_one_shot, captures time-bounded emergency mechanisms."
+        }
+      }
+    },
+    "timelock": {
+      "type": "object",
+      "required": ["address", "delay_seconds"],
+      "properties": {
+        "address": { "type": "string" },
+        "delay_seconds": { "type": ["integer", "null"] },
+        "protected_actions": { "type": "array", "items": { "type": "string" } },
+        "bypass_paths": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "oracle": {
+      "type": "object",
+      "required": ["feed", "provider", "address"],
+      "properties": {
+        "feed": { "type": "string" },
+        "provider": { "type": "string", "enum": ["chainlink", "pyth", "uniswap_twap", "internal", "redstone", "api3"] },
+        "address": { "type": "string" },
+        "admin": { "type": "string" },
+        "fallback": { "type": ["string", "null"] },
+        "staleness_threshold_seconds": { "type": ["integer", "null"] }
+      }
+    }
+  }
+}

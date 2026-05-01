@@ -1,0 +1,269 @@
+{
+  "identity": {
+    "slug": "gmx-v2",
+    "name": "GMX V2",
+    "category": "derivatives",
+    "parent_protocol": null,
+    "market_id": null,
+    "primary_chain": "arbitrum",
+    "website": "https://gmx.io",
+    "docs": "https://docs.gmx.io",
+    "chains": [
+      {
+        "chain_id": "arbitrum",
+        "deployment_block": 107737251,
+        "contracts": {
+          "data_store": "0xFD70de6b91282D8017aA4E741e9Ae325CAb992d8",
+          "role_store": "0x3c3d99FD298f679DBC2CEcd132b4eC4d0F5e6e72",
+          "exchange_router": "0x602b805EedddBbD9ddff44A7dcBD46cb07849685",
+          "deposit_vault": "0xF89e77e8Dc11691C9e8757e84aaFbCD8A67d7A55",
+          "order_vault": "0x31eF83a530Fde1B38EE9A18093A333D8Bbbc40D5",
+          "gmx_token": "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a"
+        }
+      },
+      {
+        "chain_id": "avalanche",
+        "deployment_block": null,
+        "contracts": {
+          "gmx_token": "0x62edc0692BD897D2295872a9FFCac5425011c661",
+          "_note": "Avalanche has its own DataStore, RoleStore, and admin multisig \u2014 distinct from Arbitrum. Each chain operates a separately governed deployment under the same brand. Indexer should populate Avalanche-specific addresses at index time."
+        }
+      },
+      {
+        "chain_id": "botanix",
+        "deployment_block": null,
+        "contracts": {
+          "_note": "Newer deployment (post-2024). Same pattern as Arbitrum/Avalanche. Out of scope for v0.2 mapping; add when expanding."
+        }
+      }
+    ]
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null
+  },
+  "admin_surface": [
+    {
+      "role": "ROLE_ADMIN",
+      "scope": "Top-level role in RoleStore. Can grant or revoke ANY other role including TIMELOCK_ADMIN, CONFIG_KEEPER, ORDER_KEEPER. The most powerful role in GMX V2 \u2014 whoever holds this can reshape the entire access tree.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "arbitrum",
+        "_note": "Verified on-chain via RoleStore.getRoleMembers(keccak256('ROLE_ADMIN'),0,3). Three holders: 0x4bd1cdAab4254fC43ef6424653cA2375b4C94C0E, 0xC77E6C0ca99E02660A23c00A860Dd5a8912DEaF5, 0x4A1D9e342E2dB5f4a02c9eF5cB29CaF289f31599. Authority structure for these three addresses is not yet characterized \u2014 they could be multisigs, EOAs, or contracts. PRE-LAUNCH ACTION REQUIRED: query each address to determine if it has bytecode (multisig/contract) or no bytecode (EOA). Three distinct ROLE_ADMIN holders is unusual \u2014 most protocols have one. May represent operational redundancy or distinct governance domains."
+      }
+    },
+    {
+      "role": "TIMELOCK_ADMIN",
+      "scope": "Holds authority over time-delayed protocol-modifying operations. Per GMX security docs: 'Config keepers and timelock admins could potentially disrupt regular operation through the disabling of features, incorrect setting of values, whitelisting malicious tokens, abusing the positive price impact value.'",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "arbitrum",
+        "_note": "Verified on-chain: 4 TIMELOCK_ADMIN holders. TWO are confirmed Gnosis Safes: (1) 0x8D1d2e24eC641eDC6a1ebe0F3aE7af0EBC573e0D \u2014 5-of-8 multisig, 8 signers (2) 0x58F582455b54d7c83d03BCeed95FAf72B37fdDD7 \u2014 4-of-6 multisig, 6 signers. Other two holders 0x35ea3066F90Db13e737BBd41f1ED7B4bfF8323b3 and 0xE014cbD60A793901546178E1c16ad9132C927483 are not characterized. The actual GMX timelock CONTRACT (with delay_seconds set) is not at any of these addresses \u2014 none of them respond to getMinDelay(). The timelock is held elsewhere; needs separate lookup via Reader/DataStore."
+      }
+    },
+    {
+      "role": "TIMELOCK_ADMIN_safe_1",
+      "scope": "First confirmed Safe with TIMELOCK_ADMIN role. 5-of-8 multisig (ratio 0.625).",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "0x8D1d2e24eC641eDC6a1ebe0F3aE7af0EBC573e0D",
+        "chain": "arbitrum",
+        "multisig": {
+          "kind": "gnosis_safe",
+          "threshold": 5,
+          "signers": [
+            "0xD7941C4Ca57a511F21853Bbc7FBF8149d5eCb398",
+            "0x32660E5Fe1C5d10330c019Df4eb522A78c1EC896",
+            "0x25B889f14B9E5bB65F97b456dcd1ce8a5ab0D855",
+            "0xd32b86F984254246005a1c1c5e0b6A48743Ddc93",
+            "0x49C9F377d48c417FEB1f4fb32BF2D9Eb04112Da3",
+            "0x9fCA624E05EfA27205e905a40f9cEE9cb455D890",
+            "0xeAA5600595a64a23480b2DF5FCA35A2867c912Ea",
+            "0xFbf5dC7C8911Bf3434e855374eC81414E44E2b12"
+          ],
+          "signer_count": 8,
+          "_note": "Verified on-chain: 5-of-8 (ratio 0.625). One signer (0xeAA5600595a64a23480b2DF5FCA35A2867c912Ea) appears in BOTH this multisig and the second TIMELOCK_ADMIN multisig \u2014 flag for cross-multisig signer overlap analysis."
+        }
+      }
+    },
+    {
+      "role": "TIMELOCK_ADMIN_safe_2",
+      "scope": "Second confirmed Safe with TIMELOCK_ADMIN role. 4-of-6 multisig (ratio 0.667).",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "0x58F582455b54d7c83d03BCeed95FAf72B37fdDD7",
+        "chain": "arbitrum",
+        "multisig": {
+          "kind": "gnosis_safe",
+          "threshold": 4,
+          "signers": [
+            "0x615C95DFc2531a32f7016D784AbAc0baa094051c",
+            "0x2503b5aFbe622f791Dc8c4aBd1fCC44dcDDc1C92",
+            "0x002f59f0A6ca14ced0773Cc136b48b1Ee018Bc9D",
+            "0x936C5aFFec6628B1F6594f6373526F1fCaEA2a4e",
+            "0xc22aDD51C031516079Cdb355B3676CeF202Fb590",
+            "0xeAA5600595a64a23480b2DF5FCA35A2867c912Ea"
+          ],
+          "signer_count": 6,
+          "_note": "Verified on-chain: 4-of-6 (ratio 0.667). Smaller multisig with higher threshold ratio than safe_1. Shares signer 0xeAA5600595a64a23480b2DF5FCA35A2867c912Ea with safe_1 \u2014 concentration risk."
+        }
+      }
+    },
+    {
+      "role": "CONFIG_KEEPER",
+      "scope": "Can update protocol configuration values: market parameters, fee schedules, token whitelists, position size caps, price impact factors. High blast radius for parameter manipulation. Multiple holders typical (separate addresses for routine config vs sensitive config).",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "arbitrum",
+        "_note": "RoleStore.getRoleMembers(CONFIG_KEEPER) at index time to enumerate. Typically a mix of keeper bot addresses and team multisig addresses. Per GMX security model, this role is intentionally narrow but powerful \u2014 config keepers can whitelist tokens which is the highest-risk action under this role."
+      }
+    },
+    {
+      "role": "MARKET_KEEPER",
+      "scope": "Can create new GM markets and update market-level configuration. Lower blast radius than CONFIG_KEEPER \u2014 affects new markets, not existing positions or existing pool funds.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "arbitrum",
+        "_note": "Used for permissioned market creation. New markets affect future deposits but cannot drain existing pools."
+      }
+    },
+    {
+      "role": "ORDER_KEEPER",
+      "scope": "Off-chain bots authorized to execute user orders by bundling signed oracle prices with order requests. Operationally critical \u2014 without ORDER_KEEPER bots running, no orders execute. Cannot drain or freeze, but can extract MEV-style value through transaction ordering, delayed execution, or selective ADL execution.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "arbitrum",
+        "_note": "Per GMX docs: 'Order keepers and frozen order keepers could potentially extract value through transaction ordering, delayed transaction execution, ADL execution, etc, this will be partially mitigated with a keeper network.' Risk is bounded but real."
+      }
+    },
+    {
+      "role": "ORACLE_SIGNER",
+      "scope": "Off-chain oracle nodes authorized to sign prices used for order execution. Compromise of oracle signers could enable price manipulation. Mitigated by Chainlink Data Streams integration in current GMX V2 \u2014 prices come from Chainlink with multiple-signer aggregation.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "arbitrum",
+        "_note": "Post-2024 GMX V2 uses Chainlink Data Streams for primary pricing. Oracle signer set is Chainlink's, not GMX's. This shifts trust assumption from GMX team to Chainlink \u2014 meaningful positive change from V1 architecture."
+      }
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "immutable",
+      "proxy": null,
+      "implementation": null,
+      "admin": "n/a",
+      "delay_seconds": 0,
+      "guarded_by_dao": false,
+      "_note": "Most GMX V2 contracts (DepositHandler, OrderHandler, WithdrawalHandler, ExchangeRouter, vaults) are immutable once deployed. Upgrades happen by deploying new versions and updating references in DataStore/RoleStore \u2014 NOT by proxy implementation swap. Existing positions and funds are not affected by handler upgrades; only new operations route through new handlers. This is structurally similar to Curve's pattern."
+    },
+    {
+      "mechanism": "immutable",
+      "proxy": "0xFD70de6b91282D8017aA4E741e9Ae325CAb992d8",
+      "implementation": null,
+      "admin": "n/a",
+      "delay_seconds": 0,
+      "guarded_by_dao": false,
+      "_note": "Per GMX docs: 'The RoleStore and DataStore for deployments should not change, if they are changed a migration of funds from the previous contracts to the new contracts will likely be needed.' DataStore and RoleStore are the persistent state \u2014 they are immutable in practice (replacing them = migration event). All other contract upgrades are handler swaps via TIMELOCK_ADMIN config changes."
+    }
+  ],
+  "emergency_controls": [
+    {
+      "function": "disable_market / pause_trading",
+      "contract": "DataStore-driven config",
+      "caller": "unverified:timelock arbitrum",
+      "scope": "Pauses trading on a specific market or all markets by setting config flags in DataStore. Used historically once after the AVAX manipulation incident. Does not freeze user funds \u2014 existing positions can still be closed; LP can still withdraw.",
+      "can_freeze_user_funds": false,
+      "has_timelock": true,
+      "is_one_shot": false,
+      "expires_at": null,
+      "_note": "Per public records, this pause function has been used exactly once in GMX history (briefly post-AVAX incident). Goes through 12-hour timelock; not an instant emergency stop. The Guardian / multisig has limited bypass authority for true emergencies but this is rarely documented."
+    },
+    {
+      "function": "guardian_pause",
+      "contract": "DataStore via emergency path",
+      "caller": "unverified:admin multisig arbitrum",
+      "scope": "Multisig-held emergency pause that can act faster than the 12-hour timelock. Per public reporting: 'Guardian role for the contracts, held by the multi-sig, which can pause trading for a specific asset or the whole platform if a serious issue is detected.'",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "is_one_shot": false,
+      "expires_at": null,
+      "_note": "Documented but specific function signature and gating logic not fully public. Used once historically. This is the only sub-12-hour-response emergency mechanism in GMX V2."
+    },
+    {
+      "function": "minting_cap_reduction",
+      "contract": "DataStore config",
+      "caller": "unverified:timelock arbitrum",
+      "scope": "Reduces GM token minting caps to effectively halt new liquidity provisioning to specific markets. Used during 2025 V1 exploit response to limit blast radius even though V2 was not affected.",
+      "can_freeze_user_funds": false,
+      "has_timelock": true,
+      "is_one_shot": false,
+      "expires_at": null,
+      "_note": "Demonstrated capability \u2014 used in production July 2025 in response to V1 exploit out of abundance of caution. Goes through 12h timelock."
+    }
+  ],
+  "timelocks": [
+    {
+      "address": "unverified:timelock arbitrum",
+      "delay_seconds": 43200,
+      "protected_actions": [
+        "config parameter changes",
+        "handler contract reference updates",
+        "role grants via TIMELOCK_ADMIN path"
+      ],
+      "bypass_paths": [
+        "guardian multisig (limited emergency actions)"
+      ],
+      "_note": "12-hour delay. Below 48-hour threshold considered ideal by external risk reviewers. Trade-off documented as deliberate choice for fast response capability."
+    }
+  ],
+  "oracles": [
+    {
+      "feed": "Chainlink Data Streams",
+      "provider": "chainlink",
+      "address": "via_oracle_contract",
+      "admin": "unverified:admin multisig arbitrum",
+      "fallback": null,
+      "staleness_threshold_seconds": 60,
+      "_note": "GMX V2 uses Chainlink Data Streams for primary pricing \u2014 multi-source signed price feeds with sub-second updates. Major architectural improvement over V1 (which had GMX-team-operated oracle signers as primary). Oracle contract address can be updated via TIMELOCK_ADMIN config change. Per GMX marketing: 'liquidations occur only at fair market prices \u2014 not at momentary spread spikes.'"
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "arbitrum": null,
+      "avalanche": null
+    },
+    "last_full_audit": null,
+    "_governance_model_observation": "GMX V2 is the first protocol mapped where on-chain authority is a MULTISIG, not a token-bound DAO. GMX token holders vote on Snapshot.org but those votes are advisory only \u2014 they do not bind any on-chain action. The actual on-chain authority chain is: Multisig signers \u2192 Multisig (4+ of N) \u2192 Timelock (12h) \u2192 DataStore/RoleStore \u2192 protocol contracts. This is structurally different from Aave (Governance V3 binding), Curve (Aragon DAO binding), Lido (Aragon + Dual Governance binding), Uniswap (Governor Bravo binding). The dashboard should clearly distinguish 'binding on-chain governance' from 'advisory off-chain signaling with multisig execution.' Both can have similar operational quality but they are fundamentally different trust models. GMX has good operational hygiene (multisig with 4+ signers, timelock, role separation, proven emergency response) but is more centralized than its peers in the strict sense.",
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://docs.gmx.io"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/gmx-io/gmx-synthetics"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://arbiscan.io/address/0xFD70de6b91282D8017aA4E741e9Ae325CAb992d8"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://arbiscan.io/address/0x3c3d99FD298f679DBC2CEcd132b4eC4d0F5e6e72"
+      },
+      {
+        "type": "team_disclosure",
+        "url": "https://x.com/GMX_IO/status/1943336664102756471",
+        "_note": "July 2025 V1 exploit postmortem - confirms V2 timelock-based contract update mechanism and emergency response practices"
+      }
+    ]
+  }
+}

@@ -1,0 +1,296 @@
+{
+  "identity": {
+    "slug": "aave-v3",
+    "name": "Aave V3 (Ethereum Main Market)",
+    "category": "lending",
+    "primary_chain": "ethereum",
+    "website": "https://aave.com",
+    "docs": "https://aave.com/docs",
+    "chains": [
+      {
+        "chain_id": "ethereum",
+        "deployment_block": 16291127,
+        "contracts": {
+          "pool": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+          "pool_addresses_provider": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
+          "pool_configurator": "0x64b761D848206f447Fe2dd461b0c635Ec39EbB27",
+          "acl_manager": "0xc2aaCf6553D20d1e9d78E365AAba8032af9c85b0",
+          "aave_oracle": "0x54586bE62E3c3580375aE3723C145253060Ca0C2",
+          "collector": "0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c"
+        }
+      }
+    ],
+    "parent_protocol": null,
+    "market_id": null
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null,
+    "_note": "Indexer fetches at runtime. Aave protocol-wide TVL spans many markets; this record covers Ethereum Main Market only."
+  },
+  "admin_surface": [
+    {
+      "role": "DEFAULT_ADMIN_ROLE",
+      "scope": "Root admin in ACL Manager. Can grant/revoke any other role including POOL_ADMIN. Held by ACLAdmin set in PoolAddressesProvider, which on Ethereum Main is the Governance V3 Executor Lvl1.",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "0x5300a1a15135ea4dc7ad5a167152c01efc9b192a",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": 86400,
+          "proposer_role": "0x9AEE0B04504CeF83A65AC3f0e838D0593BCb2BC7",
+          "executor_role": "permissionless",
+          "canceller_role": "aave_governance_guardian",
+          "can_bypass": false,
+          "_note": "Executor Lvl1 has 1-day delay between proposal queuing and execution. Owned by Aave Governance V3 Core contract on Ethereum."
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "POOL_ADMIN",
+      "scope": "Can update token implementations, drop reserves, (un)pause and (de)activate reserves, update premiums, list assets, modify risk parameters. Most powerful protocol-modifying role short of upgrading core implementation.",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "0x5300a1a15135ea4dc7ad5a167152c01efc9b192a",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": 86400,
+          "proposer_role": "0x9AEE0B04504CeF83A65AC3f0e838D0593BCb2BC7",
+          "executor_role": "permissionless",
+          "canceller_role": "aave_governance_guardian",
+          "can_bypass": false
+        }
+      },
+      "_note": "Per Aave docs: 'All deployers have resigned their POOL_ADMIN roles. All instances of the POOL_ADMIN role, across all v3 networks, are now governed by the Guardians multisig or by the Governance Bridge executors.' On Ethereum, the Governance Bridge executor is Executor Lvl1.",
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "EMERGENCY_ADMIN",
+      "scope": "Can pause and unpause the entire pool or individual reserves. Cannot drain, change parameters, or upgrade. Pause-only emergency switch.",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "0xCA76Ebd8617a03126B6FB84F9b1c1A0fB71C2633",
+        "chain": "ethereum",
+        "multisig": {
+          "kind": "gnosis_safe",
+          "threshold": 5,
+          "signers": null,
+          "signer_count": 9,
+          "_note": "Aave Protocol Emergency Guardian. 5-of-9 multisig of community-elected signers. Address requires runtime verification by indexer; current signer list is published in Aave governance forum and ARFC addenda but rotates. Indexer should fetch via Safe.getOwners() at index time."
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "RISK_ADMIN",
+      "scope": "Can update reserve parameters and risk settings (caps, premiums, e-mode categories). Cannot pause, drop reserves, or upgrade.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "ethereum",
+        "_note": "RISK_ADMIN role is granted to multiple addresses including the CapsPlusRiskSteward (1/1 multisig with strict on-chain validation rails) and FreezeSteward. Indexer must enumerate all role holders via ACLManager.getRoleMember() iteration."
+      }
+    },
+    {
+      "role": "ASSET_LISTING_ADMIN",
+      "scope": "Can list new assets, update oracle sources for individual reserves. Subset of POOL_ADMIN powers.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "ethereum",
+        "_note": "Currently held by Executor Lvl1 and Risk Steward addresses. Enumerate at index time."
+      }
+    },
+    {
+      "role": "BRIDGE",
+      "scope": "Whitelisted addresses for bridge mintUnbacked() and backUnbacked() operations. Used by canonical bridges (e.g. Polygon/Arbitrum native bridges) for unbacked asset accounting.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "ethereum",
+        "_note": "Limited blast radius - cannot drain, only mint/back unbacked. Still a non-trivial admin surface."
+      }
+    },
+    {
+      "role": "FLASH_BORROWER",
+      "scope": "Whitelisted addresses pay 0 fee on flash loans. Cannot drain or modify protocol.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "ethereum",
+        "_note": "Low-risk role. Mention for completeness; not a security factor."
+      }
+    },
+    {
+      "role": "AAVE_GOVERNANCE_OWNER",
+      "scope": "Owner of the Aave Governance V3 Core contract itself. Controls voting parameters, registered voting portals, and can replace Executor implementations.",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "0xC8a1E7eb89b0EF9D6Cbe8F47C22e7B0a0E9fa4d2",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": 604800,
+          "proposer_role": "0x9AEE0B04504CeF83A65AC3f0e838D0593BCb2BC7",
+          "executor_role": "permissionless",
+          "canceller_role": "aave_governance_guardian",
+          "can_bypass": false,
+          "_note": "Executor Lvl2 (Long Executor) has 7-day delay. Required for highest-impact changes including governance parameter modifications and AAVE token logic upgrades. Address requires verification by indexer - placeholder used here."
+        }
+      }
+    },
+    {
+      "role": "GOVERNANCE_GUARDIAN",
+      "scope": "Can veto/cancel any onchain payload deemed malicious before execution. Cannot create proposals or modify the protocol directly.",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "0x2CFe3ec4d5a6811f4B8067F0DE7e47DfA938Aa30",
+        "chain": "ethereum",
+        "multisig": {
+          "kind": "gnosis_safe",
+          "threshold": 5,
+          "signers": null,
+          "signer_count": 9,
+          "_note": "Aave Governance Emergency Guardian. 5-of-9 multisig. Address requires runtime verification - placeholder used. Distinct from Protocol Emergency Guardian above."
+        }
+      }
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "transparent_proxy",
+      "proxy": "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2",
+      "implementation": null,
+      "admin": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
+      "delay_seconds": 86400,
+      "guarded_by_dao": true,
+      "_note": "Pool contract is upgradeable via PoolAddressesProvider.setPoolImpl(). PoolAddressesProvider is owned by Executor Lvl1 (1-day delay). Effective upgrade path: DAO proposal \u2192 1-day Executor Lvl1 delay \u2192 upgrade. Implementation address fetched at index time."
+    },
+    {
+      "mechanism": "transparent_proxy",
+      "proxy": "0x64b761D848206f447Fe2dd461b0c635Ec39EbB27",
+      "implementation": null,
+      "admin": "0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e",
+      "delay_seconds": 86400,
+      "guarded_by_dao": true,
+      "_note": "PoolConfigurator. Same upgrade authority as Pool."
+    }
+  ],
+  "emergency_controls": [
+    {
+      "function": "pausePool",
+      "contract": "0x64b761D848206f447Fe2dd461b0c635Ec39EbB27",
+      "caller": "0xCA76Ebd8617a03126B6FB84F9b1c1A0fB71C2633",
+      "scope": "Pauses all reserves protocol-wide. Borrows, supplies, withdrawals, repayments, liquidations all halt.",
+      "can_freeze_user_funds": true,
+      "has_timelock": false,
+      "_note": "Pause does not steal funds \u2014 users can still withdraw once unpaused. But it is an immediate, non-timelocked freeze of protocol activity.",
+      "is_one_shot": false,
+      "expires_at": null
+    },
+    {
+      "function": "pauseReserve",
+      "contract": "0x64b761D848206f447Fe2dd461b0c635Ec39EbB27",
+      "caller": "0xCA76Ebd8617a03126B6FB84F9b1c1A0fB71C2633",
+      "scope": "Pauses individual reserve. Same effects as pausePool, scoped to one asset.",
+      "can_freeze_user_funds": true,
+      "has_timelock": false,
+      "is_one_shot": false,
+      "expires_at": null
+    },
+    {
+      "function": "freezeReserve",
+      "contract": "0x64b761D848206f447Fe2dd461b0c635Ec39EbB27",
+      "caller": "multiple_RISK_ADMIN_holders",
+      "scope": "Stops new supplies/borrows on a reserve. Existing positions can still be repaid and liquidated.",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "_note": "Less severe than pause. FreezeSteward (1/1 multisig) holds this granted via RISK_ADMIN role.",
+      "is_one_shot": false,
+      "expires_at": null
+    }
+  ],
+  "timelocks": [
+    {
+      "address": "0x5300a1a15135ea4dc7ad5a167152c01efc9b192a",
+      "delay_seconds": 86400,
+      "protected_actions": [
+        "POOL_ADMIN-gated calls",
+        "ACLAdmin role grants",
+        "Pool implementation upgrades",
+        "PoolConfigurator implementation upgrades",
+        "Oracle changes"
+      ],
+      "bypass_paths": [],
+      "_note": "Executor Lvl1 (Short Executor v3). 1-day delay. Standard execution path for most protocol changes."
+    },
+    {
+      "address": "0xC8a1E7eb89b0EF9D6Cbe8F47C22e7B0a0E9fa4d2",
+      "delay_seconds": 604800,
+      "protected_actions": [
+        "AAVE token implementation",
+        "stkAAVE implementation",
+        "Governance V3 parameter changes",
+        "Executor replacement"
+      ],
+      "bypass_paths": [],
+      "_note": "Executor Lvl2 (Long Executor v3). 7-day delay. Reserved for highest-impact changes. Address placeholder - verify at index time."
+    }
+  ],
+  "oracles": [
+    {
+      "feed": "AaveOracle aggregator",
+      "provider": "chainlink",
+      "address": "0x54586bE62E3c3580375aE3723C145253060Ca0C2",
+      "admin": "0x5300a1a15135ea4dc7ad5a167152c01efc9b192a",
+      "fallback": null,
+      "staleness_threshold_seconds": null,
+      "_note": "AaveOracle wraps Chainlink price feeds per asset. Per-asset feed addresses set via setAssetSources(), gated by ASSET_LISTING_ADMIN or POOL_ADMIN. Indexer must enumerate per-asset feeds at index time. No protocol-wide staleness threshold; each Chainlink feed has its own heartbeat."
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "ethereum": null
+    },
+    "last_full_audit": null,
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://aave.com/docs/developers/governance"
+      },
+      {
+        "type": "docs",
+        "url": "https://aave.com/docs/aave-v3/smart-contracts/acl-manager"
+      },
+      {
+        "type": "docs",
+        "url": "https://aave.com/docs/ecosystem/governance"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/aave-dao/aave-governance-v3"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/bgd-labs/aave-address-book"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/bgd-labs/aave-permissions-book"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://etherscan.io/address/0x87870bca3f3fd6335c3f4ce8392d69350b4fa4e2"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://etherscan.io/address/0x5300a1a15135ea4dc7ad5a167152c01efc9b192a"
+      }
+    ]
+  }
+}

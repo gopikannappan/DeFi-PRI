@@ -1,0 +1,194 @@
+{
+  "identity": {
+    "slug": "pendle-v2",
+    "name": "Pendle Finance V2",
+    "category": "yield",
+    "parent_protocol": null,
+    "market_id": null,
+    "primary_chain": "ethereum",
+    "website": "https://www.pendle.finance",
+    "docs": "https://docs.pendle.finance",
+    "chains": [
+      {
+        "chain_id": "ethereum",
+        "deployment_block": null,
+        "contracts": {
+          "pendle_token": "0x808507121b80c02388fad14726482e061b8da827",
+          "ve_pendle": "0x4f30A9D41B80ecC5B94306AB4364951AE3170210",
+          "voting_controller": "0x44087E105137a5095c008AaB6a6530182821F2F0",
+          "router_v4": "0x888888888889758F76e7103c6CbF23ABbF58F946",
+          "router_static": "0x263833d47eA3fA4a30f269323aba6a107f9eB14C",
+          "_note": "Per-market admin via PendleMarketFactoryV3. Each yield market has its own deployed contract; admin operations route through factory. Indexer must enumerate all active markets and verify admin pattern is uniform."
+        }
+      },
+      {
+        "chain_id": "arbitrum",
+        "deployment_block": null,
+        "contracts": {
+          "_note": "Mirror deployment of core contracts on Arbitrum. PENDLE token bridged. Per-chain admin multisig \u2014 distinct from Ethereum admin. Cross-chain message passing via LayerZero for vePENDLE voting weight delivery."
+        }
+      },
+      {
+        "chain_id": "bnb",
+        "deployment_block": null,
+        "contracts": {
+          "_note": "BNB Chain deployment. Per-chain admin multisig."
+        }
+      },
+      {
+        "chain_id": "optimism",
+        "deployment_block": null,
+        "contracts": {
+          "_note": "Optimism deployment. Per-chain admin multisig."
+        }
+      }
+    ]
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null
+  },
+  "admin_surface": [
+    {
+      "role": "ve_pendle_voting",
+      "scope": "On-chain governance via vePENDLE locking. Token holders lock PENDLE for vote-escrowed PENDLE (1 week to 2 years; voting weight decays linearly to expiry). vePENDLE votes direct PENDLE incentive emissions to specific yield markets \u2014 controls WHICH pools get rewards but NOT protocol code. Similar to Curve gauge weight voting but more narrowly scoped.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x4f30A9D41B80ecC5B94306AB4364951AE3170210",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "custom",
+          "voting_token": "0x808507121b80c02388fad14726482e061b8da827",
+          "quorum": "n/a (continuous voting)",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 0,
+          "proposal_threshold": "n/a",
+          "_note": "vePENDLE is not a proposal-based governance system. It's a continuous voting mechanism for incentive direction (gauge-style). Voting weights are aggregated weekly to determine PENDLE emission distribution. There is no proposal/threshold/quorum system \u2014 votes are direction signals, not binary decisions."
+        }
+      },
+      "_governance_observation": "vePENDLE binds INCENTIVE DIRECTION on-chain (the VotingController contract reads vePENDLE balances and calculates PENDLE emissions accordingly). It does NOT bind protocol upgrades, parameter changes, or admin actions \u2014 those are multisig-controlled. This is the SECOND confirmed instance of hybrid governance (after Jupiter): some on-chain action bound to token, others to multisig.",
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "protocol_admin_multisig",
+      "scope": "Authority over protocol upgrades, new market deployments, fee parameter changes, and any admin operation NOT covered by vePENDLE (which is essentially everything except incentive direction). Holds proxy admin on upgradeable contracts; gates new market deployment via PendleMarketFactoryV3.",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "0x8119EC16F0573B7dAc7C0CB94EB504FB32456ee1",
+        "chain": "ethereum",
+        "multisig": {
+          "kind": "gnosis_safe",
+          "threshold": 3,
+          "signers": [
+            "0x231FC5b039d66BA234CB90357082Bf16Be79B17c",
+            "0x7BD456937104Ca5eFfFBD895ccbba52421021C29",
+            "0x9Ce6De7ec862e25a515AA0D8EcFbBBb2DaA8E0fb",
+            "0x38ab4A7Dea2753757F29fe6d10280Df2C42abe27",
+            "0xF517364727Fcc764D58DdF4e53280874A4d0c476"
+          ],
+          "signer_count": 5,
+          "_note": "Verified on-chain via Safe.getThreshold() + Safe.getOwners(). 3-of-5 threshold (ratio 0.60). Signer identities are pseudonymous \u2014 likely Pendle team but not publicly doxxed. Pendle proxies do NOT use EIP-1967 standard slots \u2014 verified by reading both admin and impl slots returning zero. The proxy admin pattern is custom; further investigation needed to identify who can actually upgrade Router/vePENDLE."
+        }
+      }
+    },
+    {
+      "role": "timelock",
+      "scope": "Time delay layer between admin multisig and protected protocol actions. Per the Pendle V2 documentation, upgrade and parameter changes go through a timelock. Specific delay duration not publicly verified \u2014 public references suggest 24h-48h range typical for similar protocols.",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "unverified:pendle timelock ethereum",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": null,
+          "proposer_role": "unverified:pendle admin multisig ethereum",
+          "executor_role": "unverified:pendle admin multisig ethereum",
+          "canceller_role": "unverified:pendle admin multisig ethereum",
+          "can_bypass": false,
+          "_note": "Public Pendle V2 documentation describes presence of timelock but does not enumerate the address or delay duration. The PENDLE token contract itself includes a CONFIG_CHANGES_TIME_LOCK constant for token-level config changes (initiateConfigChanges + applyConfigChanges pattern). Protocol-level timelock for upgrades is separate; needs runtime verification."
+        }
+      }
+    },
+    {
+      "role": "voting_controller",
+      "scope": "Reads vePENDLE balances each epoch and computes PENDLE emission allocation per market based on votes. This contract is the on-chain bridge between vePENDLE governance and PENDLE incentive distribution. Itself controlled by protocol_admin_multisig for upgrades.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "0x44087E105137a5095c008AaB6a6530182821F2F0",
+        "chain": "ethereum",
+        "_note": "VotingController contract. Cross-chain message-passing component \u2014 vePENDLE votes on Ethereum mainnet propagate to other chains via LayerZero messages. Cross-chain admin coordination is a v0.3 schema candidate worth flagging."
+      },
+      "_schema_observation": "Cross-chain message-passing admin (Pendle, LayerZero-connected protocols) is a pattern not fully captured by current schema. The schema treats each chain independently in chains[] but cross-chain admin commitments (e.g. 'votes on Ethereum bind incentive direction on Arbitrum via LayerZero relay') are not first-class. Worth noting for v0.4+, not blocking for v0.3."
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "transparent_proxy",
+      "proxy": "via_proxy_admin",
+      "implementation": "varies",
+      "admin": "unverified:pendle admin multisig ethereum",
+      "delay_seconds": null,
+      "guarded_by_dao": false,
+      "_note": "Pendle V2 uses transparent upgradeable proxy pattern for core contracts (Router, Factory, VotingController). Proxy admin held by team multisig. Timelock layer present per documentation but parameters not fully verified. vePENDLE does NOT vote on upgrades \u2014 this is the key governance binding observation."
+    },
+    {
+      "mechanism": "immutable",
+      "proxy": null,
+      "implementation": null,
+      "admin": "n/a",
+      "delay_seconds": 0,
+      "guarded_by_dao": false,
+      "_note": "Individual yield markets (PT/YT contracts for specific assets and maturities) are immutable once deployed. Each market has its own SY (standardized yield) wrapper, PT (principal token), and YT (yield token) contracts that cannot be upgraded. Compromise of admin authority cannot retroactively alter existing markets \u2014 only block new market deployment or modify factory routing. This is structurally similar to Curve's immutable-pools pattern."
+    }
+  ],
+  "emergency_controls": [],
+  "_emergency_controls_note": "Pendle V2 does not have a documented protocol-level pause function in public materials. Individual markets cannot be paused \u2014 they run to maturity by design. Incident response would be via deploying replacement Router/Factory and migrating users (similar to Curve). The absence of pause is structurally appropriate for a yield-tokenization protocol where existing positions have fixed maturity dates and forced pause would disrupt users mid-position. Risk: a critical Router bug cannot be hot-patched; users must migrate.",
+  "timelocks": [
+    {
+      "address": "unverified:pendle timelock ethereum",
+      "delay_seconds": null,
+      "protected_actions": [
+        "proxy admin upgrades",
+        "new market deployment",
+        "fee parameter changes"
+      ],
+      "bypass_paths": [],
+      "_note": "Verification required at index time. Multi-chain protocols typically have per-chain timelocks with similar delays."
+    }
+  ],
+  "oracles": [],
+  "_oracles_note": "Pendle V2 uses oracle-free pricing for its AMM \u2014 pool curve is determined by time-to-maturity and current implied yield, not external price feeds. Underlying yield-bearing tokens may have their own oracle dependencies (e.g. wstETH uses Lido's reporting; aUSDC tracks USDC). Pendle inherits whatever oracle assumptions exist in the wrapped SY assets but does not introduce its own oracle attack surface.",
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "ethereum": null,
+      "arbitrum": null,
+      "bnb": null,
+      "optimism": null
+    },
+    "last_full_audit": null,
+    "_governance_observation": "Pendle exhibits HYBRID governance \u2014 same pattern as Jupiter. vePENDLE binds incentive direction (a real on-chain commitment via VotingController). Multisig binds everything else (upgrades, parameters, market deployment). This is materially different from Aave/Curve/Lido where token holders bind essentially all on-chain action.",
+    "_governance_binding_for_dashboard": "hybrid \u2014 second confirmation after Jupiter. The hybrid pattern is now 2+ confirmed and locks for v0.3.",
+    "_v0_3_candidates_confirmed": "Pendle confirms hybrid governance binding (now 2 instances: Jupiter + Pendle). Adds a fifth pattern observation: cross-chain admin coordination via LayerZero \u2014 a v0.4+ candidate, not v0.3.",
+    "_verification_gaps": "Pendle has the largest verification gap of any EVM protocol mapped: timelock address, multisig address, threshold, signer count, exact delay are all unverified. This is unusual for a protocol of Pendle's TVL ($2.4B+). Public team disclosure on governance specifics is weaker than Aave/Lido/EigenLayer norms. This itself is a finding worth surfacing on the dashboard \u2014 the verification status is a quality signal.",
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://docs.pendle.finance"
+      },
+      {
+        "type": "docs",
+        "url": "https://docs.pendle.finance/pendle-v2/Developers/Deployments"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/pendle-finance/pendle-core"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://etherscan.io/token/0x808507121b80c02388fad14726482e061b8da827"
+      }
+    ]
+  }
+}

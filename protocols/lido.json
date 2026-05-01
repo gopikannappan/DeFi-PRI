@@ -1,0 +1,290 @@
+{
+  "identity": {
+    "slug": "lido",
+    "name": "Lido on Ethereum",
+    "category": "lst",
+    "primary_chain": "ethereum",
+    "website": "https://lido.fi",
+    "docs": "https://docs.lido.fi",
+    "chains": [
+      {
+        "chain_id": "ethereum",
+        "deployment_block": 11473216,
+        "contracts": {
+          "ldo_token": "0x5a98fcbea516cf06857215779fd812ca3bef1b32",
+          "lido_steth": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+          "aragon_voting": "0x2e59A20f205bB85a89C53f1936454680651E618e",
+          "aragon_agent": "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c",
+          "deposit_security_module": "0x710B3303fB508a84F10793c1106e32bE873C24cd",
+          "dual_governance": "0xC1db28B3301331277e307FDCfF8DE28242A4486E",
+          "emergency_protected_timelock": "0xCE0425301C85c5Ea2A0873A2dEe44d78E02D2316",
+          "admin_executor": "0x23E0B465633FF5178808F4A75186E2F2F9537021",
+          "veto_signaling_escrow": "0x165813A31446a98c84E20Dda8C101BB3C8228e1c",
+          "reseal_manager": "0x7914b5a1539b97Bd0bbd155757F25FD79A522d24",
+          "gate_seal_vaulthub": "0x881dAd714679A6FeaA636446A0499101375A365c"
+        }
+      }
+    ],
+    "parent_protocol": null,
+    "market_id": null
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null
+  },
+  "admin_surface": [
+    {
+      "role": "aragon_voting_lido_dao",
+      "scope": "Top-level DAO. LDO holders vote to authorize protocol changes, treasury actions, parameter updates, contract upgrades. Originating authority for all in-scope governance actions; flows through Dual Governance before execution.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x2e59A20f205bB85a89C53f1936454680651E618e",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "aragon",
+          "voting_token": "0x5a98fcbea516cf06857215779fd812ca3bef1b32",
+          "quorum": "5%",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 28800,
+          "proposal_threshold": "n/a",
+          "_note": "5% of total LDO supply quorum + simple majority of participating tokens. Two-phase voting: 48-72h main phase (yes/no) + 12-24h objection phase (only 'no' votes accepted). Total ~3 days minimum. No proposal threshold \u2014 anyone with LDO can theoretically initiate via Aragon UI but practically requires DAO contributor access in current operations."
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "aragon_agent",
+      "scope": "Aragon Agent app that holds protocol roles, treasury, and executes calls following successful Aragon Vote. Holds DEFAULT_ADMIN_ROLE on most protocol contracts (StakingRouter, AccountingOracle, ValidatorsExitBusOracle, etc.).",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "aragon",
+          "voting_token": "0x5a98fcbea516cf06857215779fd812ca3bef1b32",
+          "quorum": "5%",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 28800,
+          "proposal_threshold": "n/a",
+          "_note": "Agent itself does not vote \u2014 it executes the result of an Aragon Voting decision. Listed separately because it is the on-chain caller for protocol operations, distinct from the voting contract."
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "dual_governance",
+      "scope": "Dynamic timelock layer that sits between Aragon Voting decisions and execution. All in-scope governance actions targeting Lido on Ethereum must flow through DG. stETH holders can lock tokens to extend the timelock or trigger Rage Quit (full block until withdrawals complete).",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "0xCE0425301C85c5Ea2A0873A2dEe44d78E02D2316",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": 259200,
+          "proposer_role": "0xC1db28B3301331277e307FDCfF8DE28242A4486E",
+          "executor_role": "0x23E0B465633FF5178808F4A75186E2F2F9537021",
+          "canceller_role": "0x2e59A20f205bB85a89C53f1936454680651E618e",
+          "can_bypass": false,
+          "_note": "VARIABLE TIMELOCK - schema's delay_seconds field captures only the MINIMUM. Effective delay range: 3 days (Normal state) \u2192 45 days (Veto Signaling at max stETH lock) \u2192 unbounded (Rage Quit, until ETH withdrawals complete). When stETH holders lock 1% of TVL, dynamic timelock activates. At 10% locked, Rage Quit triggers. This is not standard timelock semantics. Schema v0.2 candidate: add delay_max_seconds and delay_extensible_by fields."
+        }
+      },
+      "_schema_observation": "Dual Governance is a new pattern - stakeholder-extensible timelock. Different from Aave Lvl1/Lvl2 (fixed) or Curve admin_actions_delay (fixed per-pool). The minimum 3-day delay is the score-relevant number; the max bounds can be a secondary score input.",
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "deposit_security_committee",
+      "scope": "Committee of guardians (typically professional node operators) that signs each batch deposit attestation. Quorum required to ALLOW deposits. ANY single guardian can PAUSE deposits unilaterally (asymmetric thresholds).",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "0x710B3303fB508a84F10793c1106e32bE873C24cd",
+        "chain": "ethereum",
+        "multisig": {
+          "kind": "custom",
+          "threshold": 4,
+          "signers": null,
+          "signer_count": 6,
+          "_note": "Custom committee implemented inside DepositSecurityModule contract, NOT a Gnosis Safe. Asymmetric threshold model: ~2/3 quorum (~4 of 6) required to APPROVE deposits, but ANY 1 guardian can PAUSE via signed message. Initial guardians: Stakefish, Kiln, Blockscape, Staking Facilities, P2P, Lido dev team. Current set requires runtime verification via DSM.getGuardians(). The signer count and threshold can change via DAO vote calling addGuardians/removeGuardians."
+        }
+      },
+      "_schema_observation": "Asymmetric multisig threshold (high to allow, low to pause) is a new pattern. Schema's single threshold field doesn't capture this. v0.2 candidate: split into approve_threshold and pause_threshold for committees with asymmetric authority. Or add a separate emergency_controls entry for the unilateral pause path - which is what we'll do here for now.",
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "accounting_oracle_committee",
+      "scope": "Multi-member oracle committee that submits daily reports on validator state (balances, exit counts, slashing). Reports drive stETH rebase. Misreporting can affect supply but is sanity-checked on-chain (max APY bounds, max balance drop bounds in OracleReportSanityChecker).",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "ethereum",
+        "_note": "Committee membership managed via HashConsensus contract. Quorum required to submit a report. Typically 5-9 members. On-chain sanity checks (max APY, max balance drop) limit blast radius even if committee colludes. Indexer should enumerate via HashConsensus.getMembers() at runtime."
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "validators_exit_bus_oracle_committee",
+      "scope": "Oracle committee that signals which validators to exit. Post-EIP-7002 (Pectra), the protocol can trigger validator exits using withdrawal credentials without node operator consent. This expands the in-protocol blast radius of the oracle committee.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "ethereum",
+        "_note": "Same membership pattern as Accounting Oracle. EIP-7002 introduces a meaningful operational risk vector: governance-triggered validator exits affect staking yield and ETH withdrawal queue depth, but cannot directly steal funds. Worth surfacing on dashboard."
+      }
+    },
+    {
+      "role": "easy_track_committees",
+      "scope": "Optimistic-governance contract that delegates routine operations (node operator additions, reward distributions, allowed recipients) to trusted committees. Motions auto-pass after objection period unless LDO holders veto with 0.5%+ of supply.",
+      "controller_type": "role_based",
+      "controller": {
+        "address": "multiple",
+        "chain": "ethereum",
+        "_note": "EVMScriptExecutor is the on-chain caller. Each motion type has its own factory and limits. Out-of-bounds requests fail. Easy Track lowers DAO operational friction but adds attack surface \u2014 a malicious motion factory or whitelist update via DAO vote could expand its powers. Indexer should enumerate active motion factories."
+      }
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "transparent_proxy",
+      "proxy": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+      "implementation": null,
+      "admin": "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c",
+      "delay_seconds": 259200,
+      "guarded_by_dao": true,
+      "_note": "Lido stETH contract is upgradeable via Aragon AppProxyUpgradeable. Admin is Aragon Kernel which delegates to Aragon Voting. Effective delay = 3 days (DG min) + 3 days voting + variable DG extension. Stop-gap: stETH contract has PAUSE_ROLE held by Voting; can stop all transfers, mints, burns."
+    },
+    {
+      "mechanism": "transparent_proxy",
+      "proxy": "various_protocol_contracts",
+      "implementation": null,
+      "admin": "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c",
+      "delay_seconds": 259200,
+      "guarded_by_dao": true,
+      "_note": "Most other protocol contracts (StakingRouter, NodeOperatorsRegistry, AccountingOracle, ValidatorsExitBusOracle, WithdrawalQueueERC721) use OpenZeppelin proxy pattern with Agent as ProxyAdmin. Same effective upgrade delay applies."
+    }
+  ],
+  "emergency_controls": [
+    {
+      "function": "pauseDeposits",
+      "contract": "0x710B3303fB508a84F10793c1106e32bE873C24cd",
+      "caller": "any_DSM_guardian",
+      "scope": "Pauses new deposits to validators. ANY single DSM guardian can call. Existing user funds are unaffected; staking continues; withdrawals continue. Defends against deposit-frontrunning attacks where a malicious node operator pre-deposits with their own withdrawal credentials.",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "_note": "Asymmetric power: 1-of-N can pause, ~2/3 quorum required to resume. Deliberately designed for fast defensive response. Pause is time-bounded (pauseIntentValidityPeriodBlocks \u2248 24 hours) requiring re-trigger if needed longer.",
+      "is_one_shot": false,
+      "expires_at": null
+    },
+    {
+      "function": "seal (GateSeal)",
+      "contract": "0x881dAd714679A6FeaA636446A0499101375A365c",
+      "caller": "GateSeal_committee_multisig",
+      "scope": "Pauses critical protocol functions (Withdrawal Queue, ValidatorsExitBus, VaultHub) for fixed duration (typically 6-11 days). Designed to give DAO time to vote on a fix. After firing, GateSeal contract loses authority and a new one must be deployed.",
+      "can_freeze_user_funds": true,
+      "has_timelock": false,
+      "_note": "ONE-SHOT EMERGENCY MECHANISM. Same time-bounded pattern as Curve's kill_deadline \u2014 capability fires once and dies. This pattern is now confirmed across 2 protocols. Functionally analogous to Curve's pattern. The 'can_freeze_user_funds: true' is technically correct (withdrawals are paused) but only temporarily \u2014 funds become accessible again automatically when seal expires. Schema v0.2 candidate: distinguish 'temporarily pausable' from 'permanently freezable'.",
+      "is_one_shot": true,
+      "expires_at": null
+    },
+    {
+      "function": "extend_seal (Reseal Manager)",
+      "contract": "0x7914b5a1539b97Bd0bbd155757F25FD79A522d24",
+      "caller": "0xFFe21561251c49AdccFad065C94Fb4931dF49081",
+      "scope": "Extends an active GateSeal pause to indefinite duration. Only callable when Dual Governance is in non-Normal state (i.e., when normal DAO action is blocked by a Veto Signaling). Multisig with same signer set as GateSeal but higher quorum.",
+      "can_freeze_user_funds": true,
+      "has_timelock": false,
+      "_note": "Defends against the case where DG dynamic timelock prevents DAO from acting before GateSeal expires. Composed safety mechanism.",
+      "is_one_shot": true,
+      "expires_at": null
+    },
+    {
+      "function": "stop (stETH)",
+      "contract": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+      "caller": "0x2e59A20f205bB85a89C53f1936454680651E618e",
+      "scope": "Halts all stETH operations: transfers, mints, burns, oracle reports, withdrawals. Held only by Aragon Voting via PAUSE_ROLE.",
+      "can_freeze_user_funds": true,
+      "has_timelock": true,
+      "_note": "Requires successful DAO vote to invoke. Goes through DG timelock. Most severe pause available; all on-chain Lido operations halt.",
+      "is_one_shot": false,
+      "expires_at": null
+    }
+  ],
+  "timelocks": [
+    {
+      "address": "0xCE0425301C85c5Ea2A0873A2dEe44d78E02D2316",
+      "delay_seconds": 259200,
+      "protected_actions": [
+        "all in-scope DAO governance actions targeting Lido on Ethereum protocol contracts"
+      ],
+      "bypass_paths": [
+        "none"
+      ],
+      "_note": "Emergency Protected Timelock \u2014 the Dual Governance execution layer. Min 3 days, max 45 days (dynamic), unbounded if Rage Quit. Has emergency mode capability that can be activated by Emergency Activation Committee (0x8B7854488Fde088d686Ea672B6ba1A5242515f45) but only blocks execution; cannot fast-track."
+    }
+  ],
+  "oracles": [
+    {
+      "feed": "validator state (CL balance, exits, slashing)",
+      "provider": "internal",
+      "address": "AccountingOracle (proxy)",
+      "admin": "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c",
+      "fallback": null,
+      "staleness_threshold_seconds": 86400,
+      "_note": "Lido's own committee-based oracle, not Chainlink. ~5-9 member committee submits daily report via HashConsensus. On-chain sanity checks (OracleReportSanityChecker) bound malicious or buggy reports: max ~10% APY swing per report, max ~5% balance drop. Committee membership and quorum changes require DAO vote \u2192 DG timelock."
+    },
+    {
+      "feed": "validator exit signals",
+      "provider": "internal",
+      "address": "ValidatorsExitBusOracle (proxy)",
+      "admin": "0x3e40D73EB977Dc6a537aF587D48316feE66E9C8c",
+      "fallback": null,
+      "staleness_threshold_seconds": 86400,
+      "_note": "Separate oracle for validator exit signaling. Post-Pectra (EIP-7002), exit signals can trigger forced validator exits via withdrawal credentials. Material expansion of in-protocol authority over node operators."
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "ethereum": null
+    },
+    "last_full_audit": null,
+    "_out_of_scope_trust_surface": "Lido has significant operational trust surface that lives off-chain and is not captured in this schema: (1) Validator signing keys are held by Node Operators on their own infrastructure \u2014 Lido cannot directly sign attestations or proposals; if a node operator goes offline, Lido validators stop earning. (2) DSM guardians run a 'lido-council-daemon' off-chain that monitors deposits and signs attestations \u2014 daemon downtime stalls deposits but does not freeze funds. (3) Oracle committee members run beacon chain monitoring infrastructure to produce reports. None of these are captured in the on-chain governance schema, but they are real operational risk. The dashboard should include a separate 'off-chain trust surface' section per protocol where applicable.",
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://lido.fi/governance"
+      },
+      {
+        "type": "docs",
+        "url": "https://docs.lido.fi/lido-dao/"
+      },
+      {
+        "type": "docs",
+        "url": "https://docs.lido.fi/deployed-contracts/"
+      },
+      {
+        "type": "docs",
+        "url": "https://docs.lido.fi/contracts/deposit-security-module/"
+      },
+      {
+        "type": "docs",
+        "url": "https://docs.lido.fi/token-guides/steth-superuser-functions/"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/lidofinance/dual-governance/blob/develop/docs/specification.md"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/lidofinance/lido-improvement-proposals/blob/develop/LIPS/lip-28.md"
+      },
+      {
+        "type": "team_disclosure",
+        "url": "https://blog.lido.fi/dual-governance-101-explainer/"
+      }
+    ]
+  }
+}

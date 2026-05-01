@@ -1,0 +1,238 @@
+{
+  "identity": {
+    "slug": "curve",
+    "name": "Curve Finance",
+    "category": "dex",
+    "primary_chain": "ethereum",
+    "website": "https://curve.fi",
+    "docs": "https://docs.curve.finance",
+    "chains": [
+      {
+        "chain_id": "ethereum",
+        "deployment_block": 9456293,
+        "contracts": {
+          "crv_token": "0xD533a949740bb3306d119CC777fa900bA034cd52",
+          "voting_escrow_vecrv": "0x5f3b5DfEb7B28CDbD7FAba78963EE202a494e2A2",
+          "gauge_controller": "0x2F50D538606Fa9EDD2B11E2446BEb18C9D5846bB",
+          "address_provider": "0x0000000022D53366457F9d5E68Ec105046FC4383",
+          "stableswap_owner_proxy": "0x8cf8af108b3b46ddc6ad596aebb917e053f0d72b",
+          "pool_proxy_legacy": "0xeCb456EA5365865EbAb8a2661B0c503410e9B347",
+          "_note": "Curve has many pools and many proxies (StableSwap, CryptoSwap, Tricrypto, crvUSD, Lending, Twocrypto). Each pool's admin is set to one of these proxies, all of which delegate to the same three Aragon Agents."
+        }
+      }
+    ],
+    "parent_protocol": null,
+    "market_id": null
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null
+  },
+  "admin_surface": [
+    {
+      "role": "ownership_admin",
+      "scope": "Most powerful protocol role. Can transfer ownership of any pool, set fee receivers, replace burner contracts, set burner kill flag, donate admin fees, and add/remove gauge types. Used for major architectural changes. All operations require successful Aragon Ownership Vote.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x40907540d8a6c65c637785e8f8b742ae6b0b9968",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "aragon",
+          "voting_token": "0x5f3b5DfEb7B28CDbD7FAba78963EE202a494e2A2",
+          "quorum": "30%",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 50400,
+          "proposal_threshold": "2500e18",
+          "_note": "Aragon Agent that executes calls following successful Ownership Vote. Voting App at 0xe478de485ad2fe566d49342cbd03e49ed7db3356. Vote params: 51% support, 30% quorum, ~1 week voting period (50400 blocks at 12s/block \u2248 7 days), 2500 veCRV minimum to create proposal. veCRV is non-transferrable, granted by locking CRV up to 4 years."
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "parameter_admin",
+      "scope": "Can modify pool parameters: amplification coefficient (A), fees, admin_fees, ramp_A schedules. Cannot transfer ownership or pause pools. Lower bar to pass than ownership.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x4eeb3ba4f221ca16ed4a0cc7254e2e32df948c5f",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "aragon",
+          "voting_token": "0x5f3b5DfEb7B28CDbD7FAba78963EE202a494e2A2",
+          "quorum": "15%",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 50400,
+          "proposal_threshold": "2500e18",
+          "_note": "Aragon Agent. Voting App at 0xbcff8b0b9419b9a88c44546519b1e909cf330399. Vote params: 51% support, 15% quorum (lower bar). Per Curve docs: 'Recently, usage of the parameter agent decreased as parameter changes are now mainly also handled by the ownership agent.'"
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "emergency_admin",
+      "scope": "Can call kill_me() on pools (pauses trading but preserves proportional withdrawals), revert pending parameter changes, revert pending ownership transfers, and disable fee burning. Cannot transfer ownership, change parameters, or trap user funds.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x00669DF67E4827FCc0E48A1838a8d5AB79281909",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "aragon",
+          "voting_token": "0x4c0947B16FB1f755A2D32EC21A0c4181f711C500",
+          "quorum": "51%",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 7200,
+          "proposal_threshold": "1",
+          "_note": "Emergency DAO. Membership-based, NOT veCRV-based. 9 members, each with 1 vote. Voting App at 0x1115c9b3168563354137cdc60efb66552dd50678. Forwarder at 0xf409Ce40B5bb1e4Ef8e97b1979629859c6d5481f. Vote params: 66% support, 51% quorum, 24-hour voting period (~7200 blocks). Functionally similar to a 5-of-9 multisig but implemented as Aragon DAO. The Ownership DAO can replace Emergency DAO members via vote."
+        }
+      },
+      "_schema_observation": "This entry shows a hybrid pattern: a DAO that behaves like a multisig. The voting_token is a non-transferrable membership token (9 holders), not a vote-weighted token. Schema captures this correctly via controller_type:dao + non-veCRV voting_token, but for scoring we should treat this similarly to a 5-of-9 multisig (5 of 9 members \u2248 51% quorum \u00d7 9). Add a note in scoring to recognize this pattern.",
+      "last_changed_block": null,
+      "last_changed_tx": null
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "immutable",
+      "proxy": null,
+      "implementation": null,
+      "admin": "n/a",
+      "delay_seconds": 0,
+      "guarded_by_dao": false,
+      "_note": "Curve pool contracts are individually immutable - they are Vyper contracts with no proxy. Upgrades happen by deploying new pools and migrating liquidity, which requires user opt-in. This is a major operational-risk positive. New pool factories (e.g. Tricrypto Factory) deploy new immutable pools but do not retroactively upgrade existing pools."
+    },
+    {
+      "mechanism": "transparent_proxy",
+      "proxy": "various",
+      "implementation": null,
+      "admin": "0x40907540d8a6c65c637785e8f8b742ae6b0b9968",
+      "delay_seconds": 0,
+      "guarded_by_dao": true,
+      "_note": "Some peripheral contracts (PoolProxy, Factory implementations, AddressProvider) are upgradeable, controlled by Ownership Agent. Pool implementations referenced by Factories can be replaced - this affects newly deployed pools, not existing ones. No timelock between vote pass and execution beyond the 1-week voting period itself."
+    }
+  ],
+  "emergency_controls": [
+    {
+      "function": "kill_me(pool)",
+      "contract": "PoolProxy / CryptoPoolProxy",
+      "caller": "0x00669DF67E4827FCc0E48A1838a8d5AB79281909",
+      "scope": "Sets is_killed flag on the target pool. Disables: exchange, add_liquidity, remove_liquidity_one_coin, remove_liquidity_imbalance. Still allows: remove_liquidity (proportional withdrawal). Existing LPs can always exit at pool ratio.",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "_note": "Critical accurate semantic: kill_pool does NOT trap funds. From the 2023 reentrancy hack postmortem: 'The emergency DAO is unable to take action to pause the pool or handle user funds in any way.' LPs can always call remove_liquidity even on killed pools. This is materially different from protocols where pause = total freeze.",
+      "is_one_shot": false,
+      "expires_at": null
+    },
+    {
+      "function": "kill_me() on pool (older pools)",
+      "contract": "Individual StableSwap pools",
+      "caller": "pool_owner",
+      "scope": "Older Curve pools have an additional constraint: kill_me() can only be called before kill_deadline (typically 2 months after pool deployment). After this, the pool cannot be killed.",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "_note": "Time-bounded emergency capability. Kill capability that EXPIRES is unusual and worth surfacing on the dashboard - it's a feature, not a bug. Newer pool implementations may or may not retain this.",
+      "is_one_shot": false,
+      "expires_at": null
+    },
+    {
+      "function": "kill_gauge / set_killed (gauge)",
+      "contract": "GaugeController / individual LiquidityGauge",
+      "caller": "0x00669DF67E4827FCc0E48A1838a8d5AB79281909",
+      "scope": "Halts CRV emissions to a gauge. Does not affect the underlying pool or user funds. Used to disincentivize compromised or risky pools without disrupting their function.",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "_note": "Most-used emergency action in practice. Lower blast radius than kill_me on a pool.",
+      "is_one_shot": false,
+      "expires_at": null
+    },
+    {
+      "function": "set_burner_kill(true)",
+      "contract": "PoolProxy",
+      "caller": "0x00669DF67E4827FCc0E48A1838a8d5AB79281909",
+      "scope": "Disables the fee-burning mechanism (admin fee \u2192 USDC \u2192 3CRV \u2192 veCRV holders). Does not affect trading or user funds.",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "is_one_shot": false,
+      "expires_at": null
+    },
+    {
+      "function": "revert_new_parameters(pool)",
+      "contract": "PoolProxy",
+      "caller": "ownership_admin OR parameter_admin OR emergency_admin",
+      "scope": "Cancels a pending parameter change before it's applied. Defensive control, not state-changing.",
+      "can_freeze_user_funds": false,
+      "has_timelock": false,
+      "is_one_shot": false,
+      "expires_at": null
+    }
+  ],
+  "timelocks": [
+    {
+      "address": "pool-level",
+      "delay_seconds": 259200,
+      "protected_actions": [
+        "commit_new_parameters \u2192 apply_new_parameters",
+        "commit_transfer_ownership \u2192 apply_transfer_ownership"
+      ],
+      "bypass_paths": [
+        "emergency_admin (revert only)",
+        "ownership_admin (revert only)"
+      ],
+      "_note": "Each Curve pool enforces a 3-day delay between commit and apply for parameter changes and ownership transfers via admin_actions_delay constant. This is hardcoded per-pool, not centrally governed. The 1-week voting period adds further effective delay; total time from proposal to applied parameter change is typically 10+ days."
+    }
+  ],
+  "oracles": [
+    {
+      "feed": "internal pool spot",
+      "provider": "internal",
+      "address": "n/a",
+      "admin": "immutable",
+      "fallback": null,
+      "staleness_threshold_seconds": null,
+      "_note": "StableSwap pools use internal balances, not external oracles. CryptoSwap and Tricrypto pools use internal EMA oracles (price_oracle()). No external oracle dependency for core AMM operation. crvUSD markets use Chainlink \u2014 separate sub-system not covered in this record."
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "ethereum": null
+    },
+    "last_full_audit": null,
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://docs.curve.finance/governance/overview/"
+      },
+      {
+        "type": "docs",
+        "url": "https://docs.curve.finance/references/deployed-contracts/"
+      },
+      {
+        "type": "docs",
+        "url": "https://docs.curve.finance/references/curve-practices/"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/curvefi/curve-dao-contracts/blob/master/scripts/voting/new_vote.py"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/PoolProxy.vy"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://etherscan.io/address/0x40907540d8a6c65c637785e8f8b742ae6b0b9968"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://etherscan.io/address/0x00669DF67E4827FCc0E48A1838a8d5AB79281909"
+      },
+      {
+        "type": "team_disclosure",
+        "url": "https://hackmd.io/@LlamaRisk/BJzSKHNjn",
+        "_note": "2023 reentrancy postmortem - confirms kill_pool semantics"
+      }
+    ]
+  }
+}

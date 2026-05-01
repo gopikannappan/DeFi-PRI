@@ -1,0 +1,140 @@
+{
+  "identity": {
+    "slug": "uniswap-v3",
+    "name": "Uniswap V3",
+    "category": "dex",
+    "primary_chain": "ethereum",
+    "website": "https://uniswap.org",
+    "docs": "https://docs.uniswap.org",
+    "chains": [
+      {
+        "chain_id": "ethereum",
+        "deployment_block": 12369621,
+        "contracts": {
+          "factory": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+          "swap_router_02": "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
+          "nonfungible_position_manager": "0xC36442b4a4522E871399CD717aBDD847Ab11FE88",
+          "quoter_v2": "0x61fFE014bA17989E743c5F6cB21bF9697530B21e"
+        }
+      }
+    ],
+    "parent_protocol": null,
+    "market_id": null
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null,
+    "_note": "Populated at index time from DefiLlama API; left null in static template"
+  },
+  "admin_surface": [
+    {
+      "role": "factory_owner",
+      "scope": "Can enable new fee tiers via enableFeeAmount(). Cannot pause, drain, or modify existing pools.",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": 172800,
+          "proposer_role": "0xGovernorBravo",
+          "executor_role": "0x0000000000000000000000000000000000000000",
+          "canceller_role": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
+          "can_bypass": false
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "protocol_fee_setter",
+      "scope": "Can call setFeeProtocol() on individual pools to take a cut of LP fees. Capped on-chain.",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": 172800,
+          "proposer_role": "0xGovernorBravo",
+          "executor_role": "0x0000000000000000000000000000000000000000",
+          "canceller_role": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
+          "can_bypass": false
+        }
+      }
+    },
+    {
+      "role": "governance",
+      "scope": "Root governance authority. Owns the timelock, can replace the factory owner, and controls treasury.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x408ED6354d4973f66138C91495F2f2FCbd8724C3",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "governor_bravo",
+          "voting_token": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+          "quorum": "40000000e18",
+          "voting_delay_blocks": 13140,
+          "voting_period_blocks": 40320,
+          "proposal_threshold": "2500000e18"
+        }
+      }
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "immutable",
+      "proxy": null,
+      "implementation": null,
+      "admin": "n/a",
+      "delay_seconds": 0,
+      "guarded_by_dao": false,
+      "_note": "Core pool and factory contracts are immutable. SwapRouter is replaced by deploying new versions, not by upgrading."
+    }
+  ],
+  "emergency_controls": [],
+  "_emergency_controls_note": "Uniswap V3 has no pause function. No admin can stop trading or freeze user positions. This is a deliberate design choice and a key risk-score positive.",
+  "timelocks": [
+    {
+      "address": "0x1a9C8182C09F50C8318d769245beA52c32BE35BC",
+      "delay_seconds": 172800,
+      "protected_actions": [
+        "enableFeeAmount",
+        "setFeeProtocol",
+        "setOwner"
+      ],
+      "bypass_paths": []
+    }
+  ],
+  "oracles": [
+    {
+      "feed": "in-pool TWAP",
+      "provider": "uniswap_twap",
+      "address": "n/a",
+      "admin": "immutable",
+      "fallback": null,
+      "staleness_threshold_seconds": null,
+      "_note": "Each pool exposes its own TWAP via observe(). No external oracle dependency. Admin field is 'immutable' since the pool itself is immutable."
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "ethereum": null
+    },
+    "last_full_audit": null,
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://docs.uniswap.org/contracts/v3/reference/governance/overview"
+      },
+      {
+        "type": "etherscan_verified",
+        "url": "https://etherscan.io/address/0x1F98431c8aD98523631AE4a59f267346ea31F984#code"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/Uniswap/v3-core"
+      }
+    ]
+  }
+}

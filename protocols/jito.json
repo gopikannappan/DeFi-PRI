@@ -1,0 +1,189 @@
+{
+  "identity": {
+    "slug": "jito",
+    "name": "Jito (JitoSOL + Network)",
+    "category": "lst",
+    "parent_protocol": null,
+    "market_id": null,
+    "primary_chain": "solana",
+    "website": "https://www.jito.network",
+    "docs": "https://www.jito.network/docs",
+    "chains": [
+      {
+        "chain_id": "solana",
+        "deployment_block": null,
+        "contracts": {
+          "spl_stake_pool_program": "SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy",
+          "jitosol_stake_pool": "Jito4APyf642JPZPx3hGc6WWJ8zPKtRbRs4P815Awbb",
+          "jitosol_mint": "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
+          "jto_token": "jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL",
+          "_note": "Notable: spl_stake_pool_program is NOT a Jito-controlled contract. It's the SPL Stake Pool Program from Solana Labs, used by JitoSOL and many other LSTs (Marinade legacy, BlazeStake, etc). Upgrade authority held by a Solana ecosystem committee. Jito only controls the pool instance and its parameters via the pool manager authority \u2014 not the underlying program logic. This trust-distribution is structurally important: a malicious upgrade to the stake pool program would require collusion at the ecosystem committee level, not just at Jito. Jito's own custom programs (StakeNet, Steward Program, Block Engine, TipRouter) ARE Jito-controlled."
+        }
+      }
+    ]
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null
+  },
+  "admin_surface": [
+    {
+      "role": "stake_pool_program_upgrade_authority",
+      "scope": "Authority to deploy a new version of the SPL Stake Pool Program. A malicious upgrade could insert logic to drain the pool. VERIFIED ON-CHAIN: held by a Squads V3 multisig, 6-of-10 threshold (config account 3yqoHFE4nBGchuVH5rJuZMFvsmnaDTuLLdvGPDUEJcbW; vault PDA dPpFfahSWhm5M2RB3nVaHsXfnh9ooz5bWtR3WeUguDH). This validates Jito's published claim of a 'committee of Solana Staking Ecosystem participants' \u2014 the on-chain reality matches the marketing for THIS authority.",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "3yqoHFE4nBGchuVH5rJuZMFvsmnaDTuLLdvGPDUEJcbW",
+        "chain": "solana",
+        "multisig": {
+          "kind": "squads",
+          "threshold": 6,
+          "signers": [
+            "2JLq2HWYLws938d3vZwS2r8Qex1FJJeXoF2KViPCZoyv",
+            "2TGXpEX5wYAwKvENSPqWK8DiuN6L7si2FHKB9SWx2eyn",
+            "38XhwqCgQGdeNeXyHQ94Jrdsoup71G6ioiYuvimXwH3z",
+            "3LPh9LN88kxSe3shxLZ2R4jiNmHh2U2F9h9TmVKjc18P",
+            "4vK6sVXQNkiEY1wyqx9Q44JxMGRHS9XJ6NoavaZwzGLE",
+            "64nG4kYQqfhzputDFhTHFHQHiggJwAEGY2L5EfFQreMK",
+            "7zND8YAtCYehNoa1JrfDLQZi44xJkEuPWK5b4CkiuFpo",
+            "87NzWWHLaFXVG5v6rqVNShz79ChTNWd4yJkvENKxZCtD",
+            "9jL67tfhDVMvMtFqXsAxLC4iyGb4D8bREQMjg65UNkNN",
+            "ChSAh3XXTxpp5n2EmgSCm6vVvVPoD1L9VrK3mcQkYz7m"
+          ],
+          "signer_count": 10,
+          "_note": "VERIFIED via Solscan: Squads V3 multisig (program SMPLecH534NA9acpos4G6x7uf3LWbCAwZQE9e8ZekMu). Config: 3yqoHFE4nBGchuVH5rJuZMFvsmnaDTuLLdvGPDUEJcbW. Vault PDA (= upgrade authority): dPpFfahSWhm5M2RB3nVaHsXfnh9ooz5bWtR3WeUguDH. 6-of-10 (ratio 0.60). 10 distinct signers \u2014 highest signer count of any multisig mapped. This is a strong trust distribution model."
+        }
+      },
+      "_schema_observation": "First mapping where verified on-chain authority structure CONTRADICTS the protocol's published governance description. The dashboard must distinguish 'multisig in narrative' from 'multisig on-chain.'"
+    },
+    {
+      "role": "jitosol_pool_manager",
+      "scope": "Authority over JitoSOL stake pool parameters. The pool manager address 5eosrve6... appears to be a program-derived account (Solscan inspection: shows program-like characteristics, not a regular wallet). Specific controlling program not yet identified; could be a Squads V4 vault PDA or custom Jito governance program. NOT a single keypair.",
+      "controller_type": "eoa",
+      "controller": {
+        "address": "5eosrve6LktMZgVNszYzebgmmC7BjLK8NoWyRQtcmGTF",
+        "chain": "solana",
+        "_note": "Solscan inspection shows this address is program-related (not a regular wallet, no individual owner details). Likely a PDA controlled by either Squads V4 or a custom Jito governance program. Pre-launch action: confirm exact controlling program. Conservative interpretation: program-controlled, specific multisig identity TBD. The other related authorities (staker, stake_deposit_authority) are separate addresses providing role separation."
+      },
+      "_other_pool_authorities": {
+        "staker": "9BAmGVLGxzqct6bkgjWmKSv3BFB6iKYXNBQp8GWG1LDY",
+        "stake_deposit_authority": "6hg6RMfjn3QSW6MdjH2Dg3dhF9XsVEE8CQXhjYwkRCiK"
+      }
+    },
+    {
+      "role": "jto_realms_dao",
+      "scope": "JTO governance via Realms (SPL Governance program). On-chain voting with quorum/threshold-based proposal passage. Per Jito documentation, JTO governs validator scoring criteria, MEV-related incentive parameters, treasury allocations, ecosystem grants, and fee policies. Proposals execute via 'DAO governance program and multisig procedures' \u2014 meaning passed proposals trigger multisig execution rather than direct execution.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "unverified:jito realms governance address",
+        "chain": "solana",
+        "dao": {
+          "kind": "realms",
+          "voting_token": "jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL",
+          "quorum": "TBD",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 0,
+          "proposal_threshold": "TBD",
+          "_note": "Built on SPL Governance / Realms. Specific governance realm address, quorum percentage, and proposal threshold not enumerated in the public docs at the level needed. Indexer should resolve. This is the second Solana protocol mapped using Realms (after Jupiter DAO) \u2014 confirms Realms as the de facto governance standard on Solana."
+        }
+      },
+      "_governance_observation": "JTO governance binding is hybrid: Realms passes proposals on-chain (binding quorum/threshold), but execution requires multisig action. The strength of binding depends on how the multisig procedures are coded \u2014 if multisig is a designated executor with no discretion, binding is strong. If multisig retains veto authority, binding is weaker. Public materials describe 'multisig procedures' without specifying which model \u2014 verification gap."
+    },
+    {
+      "role": "stakenet_program_authority",
+      "scope": "Upgrade authority over Jito's custom StakeNet programs (Validator History, Steward Program). These programs handle on-chain validator scoring and automated stake delegation for JitoSOL. Held by Jito multisig.",
+      "controller_type": "program_authority",
+      "controller": {
+        "address": "unverified:jito squads multisig",
+        "chain": "solana",
+        "program_authority": {
+          "authority": "unverified:jito squads multisig",
+          "is_immutable": false,
+          "upgrade_authority_set": true,
+          "_note": "Custom Jito programs (StakeNet validator history, Steward program for stake allocation) are upgradeable via Jito's Squads multisig. Specific program addresses not enumerated here; multiple programs in the StakeNet suite. Indexer should enumerate."
+        }
+      }
+    },
+    {
+      "role": "tiprouter_program_authority",
+      "scope": "Upgrade authority over Jito's TipRouter program \u2014 handles MEV tip distribution from validators to stakers via merkle root consensus. Critical to Jito's MEV economics. TipRouter operators submit merkle roots; quorum (>2/3) determines distribution.",
+      "controller_type": "program_authority",
+      "controller": {
+        "address": "unverified:jito squads multisig",
+        "chain": "solana",
+        "program_authority": {
+          "authority": "unverified:jito squads multisig",
+          "is_immutable": false,
+          "upgrade_authority_set": true,
+          "_note": "TipRouter NCN built on Jito (Re)staking. Distributes MEV tips: 5.7% to Jito DAO, 0.15% each to JitoSOL stakers and JTO stakers. Operators submit merkle roots; consensus mechanism (>2/3 of operators) determines distribution. Upgrade via Jito multisig."
+        }
+      }
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "program_upgrade",
+      "proxy": null,
+      "implementation": "SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy",
+      "admin": "unverified:solana staking ecosystem committee multisig",
+      "delay_seconds": null,
+      "guarded_by_dao": false,
+      "_note": "SPL Stake Pool Program \u2014 substrate for JitoSOL. Upgrade controlled by Solana Staking Ecosystem committee, NOT Jito. Audited 9 times per Jito disclosures. This shared-infrastructure model distributes trust across multiple LST protocols and Solana Foundation."
+    },
+    {
+      "mechanism": "program_upgrade",
+      "proxy": null,
+      "implementation": "unverified:stakenet steward etc",
+      "admin": "unverified:jito squads multisig",
+      "delay_seconds": null,
+      "guarded_by_dao": false,
+      "_note": "Jito-controlled custom programs (StakeNet, Steward, Block Engine, TipRouter). Upgrade authority via Jito Squads multisig. No documented timelock on upgrades."
+    }
+  ],
+  "emergency_controls": [],
+  "_emergency_controls_note": "JitoSOL inherits the SPL Stake Pool Program's pause/freeze capabilities (if any). JitoSOL is non-custodial \u2014 withdrawals always possible directly through the program (instant via reserve, or via stake account delegation that takes 1 epoch). No protocol-level kill switch documented. Emergency response would be via deploying a new version of relevant programs through respective multisigs.",
+  "timelocks": [],
+  "_timelocks_note": "No documented timelock on Jito's own program upgrades or pool manager authority changes. Squads V4 supports time-locked execution as a configurable feature. Jito's specific configuration not publicly verified.",
+  "oracles": [
+    {
+      "feed": "validator_performance_metrics",
+      "provider": "internal",
+      "address": "via_stakenet",
+      "admin": "unverified:jito squads multisig",
+      "fallback": null,
+      "staleness_threshold_seconds": null,
+      "_note": "StakeNet's Validator History Program records on-chain validator metrics (commission, performance, delinquency rates) that drive automated stake allocation. Not a price oracle but a performance oracle. Compromise of upgrade authority over StakeNet programs could enable manipulation of validator scoring \u2192 stake delegation to underperforming or malicious validators. Mitigated by 4-tier hierarchical scoring with binary criteria filters first."
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "solana": null
+    },
+    "last_full_audit": null,
+    "_governance_observation": "Jito's authority structure spans three distinct layers: (1) SPL Stake Pool Program \u2014 VERIFIED Squads V3 6-of-10 multisig with 10 distinct signers (the strongest trust distribution of any multisig mapped); (2) JitoSOL pool manager \u2014 program-controlled (specific program TBD); (3) JTO Realms DAO \u2014 strategic governance. The original 'EOA' finding from the first verification pass was incorrect \u2014 Solscan inspection reveals these are PDAs/program accounts, not single keypairs.",
+    "_governance_binding_for_dashboard": "hybrid \u2014 third confirmation after Jupiter and Pendle. The hybrid pattern is now firmly established as a real third category beyond pure-DAO and pure-multisig.",
+    "_v0_3_candidates_observation": "Jito introduces a new pattern worth flagging for v0.4+ (not v0.3): shared-infrastructure-program where critical authority is held by a multi-protocol ecosystem committee, not the protocol team. This is unique to Solana LSTs (multiple protocols share one stake pool program) and possibly other shared-program patterns on Solana. Not common enough across protocols to warrant a v0.3 schema field, but a worthwhile dashboard annotation.",
+    "_verification_gaps": "Jito has substantial verification gaps: Squads multisig address, threshold, signer count; Realms governance address, quorum, threshold; specific addresses for StakeNet programs; Solana ecosystem committee composition. All recoverable at index time but not in static template.",
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://www.jito.network/docs/jitosol/jitosol-liquid-staking/security/deployed-programs/"
+      },
+      {
+        "type": "docs",
+        "url": "https://www.jito.network/docs/hub/overview/"
+      },
+      {
+        "type": "team_disclosure",
+        "url": "https://squads.xyz/blog/jito-mev-solana-jitosol",
+        "_note": "Squads case study confirming Jito uses Squads multisig for pool manager + program upgrades"
+      },
+      {
+        "type": "third_party",
+        "url": "https://onekey.so/blog/ecosystem/what-is-jto-token-governance-and-staking-in-the-jito-network/",
+        "_note": "Confirms Realms-based governance with multisig execution"
+      }
+    ]
+  }
+}

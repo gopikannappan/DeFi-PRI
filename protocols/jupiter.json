@@ -1,0 +1,151 @@
+{
+  "identity": {
+    "slug": "jupiter-aggregator",
+    "name": "Jupiter Aggregator V6",
+    "category": "dex",
+    "parent_protocol": "jupiter",
+    "market_id": "aggregator",
+    "primary_chain": "solana",
+    "website": "https://jup.ag",
+    "docs": "https://station.jup.ag",
+    "chains": [
+      {
+        "chain_id": "solana",
+        "deployment_block": null,
+        "contracts": {
+          "aggregator_v6_program": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+          "limit_order_program": "jupoNjAxXgZ4rjzxzPMP4oxduvQsQtZzyknqvzYNrNu",
+          "jup_token_mint": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+          "_note": "Jupiter has multiple programs across DEX aggregation, limit orders, DCA, perpetuals (JLP), liquid staking (jupSOL), and lending. Each program is a separate contract account on Solana. This record covers the canonical Aggregator V6 only. Sibling records under parent_protocol 'jupiter' should cover Perp, Lend, and jupSOL when added."
+        }
+      }
+    ]
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null,
+    "_note": "Aggregator routes value rather than custodying it for swaps. TVL metric here is not directly comparable to a lending protocol or AMM. For risk scoring, the relevant magnitude is daily routed volume + JLP TVL (covered separately under jupiter-perp record)."
+  },
+  "admin_surface": [
+    {
+      "role": "program_upgrade_authority",
+      "scope": "Authority to deploy a new version of the Jupiter Aggregator V6 program, replacing all of its bytecode. On Solana, this is the equivalent of contract upgrade authority on EVM \u2014 a malicious upgrade could insert any logic into the program, including drainage of in-flight swap balances. However, Aggregator V6 does not custody user funds long-term; swap balances pass through within a single transaction. Blast radius is limited compared to a custodial program.",
+      "controller_type": "program_authority",
+      "controller": {
+        "address": "CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ",
+        "chain": "solana",
+        "program_authority": {
+          "authority": "CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ",
+          "is_immutable": false,
+          "upgrade_authority_set": true,
+          "_note": "VERIFIED: Program upgrade authority is CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ \u2014 the Squads V3 vault PDA derived from the multisig config account 7ZyDFzet6sKgZLN4D89JLfo7chu2n7nYdkFt5RCFk8Sf. Squads V3 multisig: 4-of-7 threshold (ratio 0.57). Members listed in associated_squads_multisig role below. Squads V3 does NOT support native time-locked execution \u2014 Jupiter program upgrades have no timelock."
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "squads_multisig_upgrade_authority",
+      "scope": "Squads V3 multisig that controls program upgrade authority for Jupiter Aggregator V6. The vault PDA derived from this multisig config account (CvQZZ23q...) is what's set as the upgrade authority on the Jupiter program. 4-of-7 threshold.",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "7ZyDFzet6sKgZLN4D89JLfo7chu2n7nYdkFt5RCFk8Sf",
+        "chain": "solana",
+        "multisig": {
+          "kind": "squads",
+          "threshold": 4,
+          "signers": [
+            "3ZR4gMzciDHZudi5e1evdESKZuCQEE9QNHLkMoRsfDxQ",
+            "89FnbsKH8n6FXCghGUijxh3snqx3e6VXJ7q1fQAHWkQQ",
+            "BYidGfUnfoQtqi4nHiuo57Fjreizbej6hawJLnbwJmYr",
+            "CHRDWWqUs6LyeeoD7pJb3iRfnvYeMfwMUtf2N7zWk7uh",
+            "Dg5NLa5JuwfRMkuwZEguD9RpVrcQD3536GxogUv7pLNV",
+            "EhJqf1p39c8NnH5iuZAJyw778LQua1AhZWxarT5SF8sT",
+            "GGG2JyBtwbPAsYwUQED8GBbj9UMi7NQa3uwN3DmyGNtz"
+          ],
+          "signer_count": 7,
+          "_note": "VERIFIED via Solscan: Squads V3 multisig (program SMPLecH534NA9acpos4G6x7uf3LWbCAwZQE9e8ZekMu). Config account: 7ZyDFzet6sKgZLN4D89JLfo7chu2n7nYdkFt5RCFk8Sf. Vault PDA (= upgrade authority): CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ. 4-of-7 (ratio 0.57). 7 pseudonymous signers, likely Jupiter team."
+        }
+      },
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "jupiter_dao_voting",
+      "scope": "On-chain governance via vote.jup.ag. JUP holders stake to vote on TREASURY allocations, working group funding, LFG Launchpad project approvals, and ecosystem direction. Does NOT have authority over Aggregator V6 program upgrades or any direct program control.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "vote.jup.ag_realms_program",
+        "chain": "solana",
+        "dao": {
+          "kind": "realms",
+          "voting_token": "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
+          "quorum": "30%",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 0,
+          "proposal_threshold": "n/a",
+          "_note": "Built on SPL Governance / Realms. 30% quorum. Voting period typically ~1 week. This DAO governs treasury and ecosystem decisions, not protocol code. On the spectrum of governance binding: Jupiter DAO is partially binding for treasury actions (controlled programs hold funds) but NOT binding for Aggregator V6 program upgrades \u2014 those go through Squads."
+        }
+      },
+      "_governance_observation": "Jupiter exhibits a HYBRID governance model. Some on-chain authority (treasury) IS bound by DAO vote. Other on-chain authority (program upgrades) is bound by multisig. This is different from GMX (entirely advisory DAO + multisig execution) and different from Aave/Curve/Lido (entirely DAO-bound). Score scoring should recognize this hybrid pattern.",
+      "last_changed_block": null,
+      "last_changed_tx": null
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "program_upgrade",
+      "proxy": null,
+      "implementation": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+      "admin": "CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ",
+      "delay_seconds": 0,
+      "guarded_by_dao": false,
+      "_note": "Solana program upgrade authority (verified on-chain) is CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ. Type of authority unverified \u2014 could be Squads multisig, custom multisig, or single key. Pre-launch action: query the account owner_program to determine. No documented timelock regardless."
+    }
+  ],
+  "emergency_controls": [],
+  "_emergency_controls_note": "Jupiter Aggregator V6 has no documented pause function. The aggregator is largely stateless \u2014 it routes swaps in single transactions and does not custody balances long-term. There is no protocol-level kill switch. Incident response would be via deploying a new program version that rejects all swaps, which goes through normal Squads upgrade path. This is structurally similar to Uniswap V3 (no emergency control) but differs in that Uniswap is fully immutable while Jupiter is mutable.",
+  "timelocks": [],
+  "_timelocks_note": "No timelock on Aggregator V6 program upgrades by default. Squads V4 supports time-locked execution as a configurable feature. Jupiter's specific config requires runtime verification.",
+  "oracles": [
+    {
+      "feed": "external_dex_pricing",
+      "provider": "internal",
+      "address": "n/a",
+      "admin": "n/a",
+      "fallback": null,
+      "staleness_threshold_seconds": null,
+      "_note": "Jupiter Aggregator V6 does not use price oracles itself \u2014 it queries prices from underlying DEXs (Orca, Raydium, Phoenix, Meteora, etc.) at swap time. Price accuracy is delegated to the underlying venues. This is a structural advantage for the aggregator: no oracle attack surface to attack the aggregator itself. Compromise of an underlying DEX would affect routing decisions but the aggregator program is not directly vulnerable."
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "solana": null
+    },
+    "last_full_audit": null,
+    "_schema_validation_observation": "Jupiter is the first Solana protocol mapped against the schema. The v0.2 schema generalized to Solana with NO field additions needed \u2014 controller_type:program_authority and multisig.kind:squads were already in the enum. parent_protocol/market_id captures the multi-program Jupiter brand cleanly. The VM-agnostic claim is confirmed: schema works for Solana as cleanly as for EVM.",
+    "_governance_observation": "Jupiter exhibits a HYBRID governance model. Program upgrades bind to a Squads V3 multisig (4-of-7). Treasury and ecosystem decisions bind to JUP DAO via Realms. The multisig is verified via Solscan; the upgrade authority on-chain is the Squads vault PDA, the multisig config account holds threshold/members.",
+    "_off_chain_trust_observation": "Like GMX, Jupiter has significant operational dependency on off-chain infrastructure: route quoting backends (quote-api.jup.ag), MEV protection RPCs, indexer infrastructure. None of this is captured in the on-chain schema. Confirms that off-chain trust surface is a real gap for at least 3 protocols (Lido, GMX, Jupiter) \u2014 strongly suggests trust_surface[] field is justified for v0.3.",
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://station.jup.ag"
+      },
+      {
+        "type": "docs",
+        "url": "https://vote.jup.ag"
+      },
+      {
+        "type": "team_disclosure",
+        "url": "https://squads.so/blog/solana-multisig-program-upgrades-management",
+        "_note": "Squads blog confirms Jupiter is a Squads customer for program upgrade authority management"
+      },
+      {
+        "type": "github",
+        "url": "https://github.com/jup-ag/instruction-parser"
+      }
+    ]
+  }
+}

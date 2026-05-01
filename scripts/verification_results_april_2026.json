@@ -1,0 +1,261 @@
+{
+  "pendle": {
+    "owner_safe": {
+      "address": "0x8119EC16F0573B7dAc7C0CB94EB504FB32456ee1",
+      "threshold": 3,
+      "signers": [
+        "0x231FC5b039d66BA234CB90357082Bf16Be79B17c",
+        "0x7BD456937104Ca5eFfFBD895ccbba52421021C29",
+        "0x9Ce6De7ec862e25a515AA0D8EcFbBBb2DaA8E0fb",
+        "0x38ab4A7Dea2753757F29fe6d10280Df2C42abe27",
+        "0xF517364727Fcc764D58DdF4e53280874A4d0c476"
+      ],
+      "signer_count": 5
+    },
+    "router_proxy": {
+      "address": "0x888888888889758F76e7103c6CbF23ABbF58F946",
+      "admin": "0x0000000000000000000000000000000000000000",
+      "implementation": "0x0000000000000000000000000000000000000000"
+    },
+    "vependle_proxy": {
+      "address": "0x4f30A9D41B80ecC5B94306AB4364951AE3170210",
+      "admin": "0x0000000000000000000000000000000000000000",
+      "implementation": "0x0000000000000000000000000000000000000000"
+    },
+    "voting_controller_proxy": {
+      "address": "0x44087E105137a5095c008AaB6a6530182821F2F0",
+      "admin": "0x0000000000000000000000000000000000000000",
+      "implementation": "0xca10fb0f2ce19cde44b42df2f42607977dfa4549"
+    }
+  },
+  "eigenlayer": {
+    "pauser_multisig": {
+      "address": "0x1a051eF1524cbaEa57Ca04319ef93fE78903D5E6",
+      "error": "no code at address (EOA / wrong chain)"
+    },
+    "operations_multisig": {
+      "address": "0x8eD55c7640497Db15aC32c698c1a06E2E604d865",
+      "error": "no code at address (EOA / wrong chain)"
+    },
+    "protocol_council": {
+      "address": "0x841B988aaEafce13b6456ff34015FBc42Aedb7e6",
+      "error": "no code at address (EOA / wrong chain)"
+    },
+    "community_multisig": {
+      "address": "0xC107547924C7D1d3E2d10eA8DF534BBfC5F373e6",
+      "error": "no code at address (EOA / wrong chain)"
+    },
+    "primary_timelock": {
+      "address": "0xC06Fd4F821eaC1fF1ae8067b36342899b57BAa2d",
+      "delay_seconds": 864000
+    },
+    "beigen_timelock": {
+      "address": "0x738130bc8eade1bc65a9c056dea636835896bc53",
+      "delay_seconds": 2073600
+    },
+    "strategy_manager": {
+      "address": "0x858646372CC42E1A627fcE94aa7A7033e7CF075A",
+      "strategyWhitelister": "0x5e4C39Ad7A3E881585e383dB9827EB4811f6F647",
+      "owner": "0x369e6F597e22EaB55fFb173C6d9cD234BD699111"
+    },
+    "strategy_whitelister_resolved": {
+      "kind": "unknown",
+      "address": "0x5e4C39Ad7A3E881585e383dB9827EB4811f6F647"
+    }
+  },
+  "sky": {
+    "pause_proxy": {
+      "address": "0xBE8E3e3618f7474F8cB1d074A26afFef007E98FB",
+      "admin": "0x0000000000000000000000000000000000000000",
+      "implementation": "0x0000000000000000000000000000000000000000"
+    },
+    "mcd_pause": {
+      "address": "0xbE286431454714F511008713973d3B053A2d38f3",
+      "delay_seconds": 86400,
+      "owner": "0x0000000000000000000000000000000000000000"
+    },
+    "chief": {
+      "address": "0x929d9A1435662357F54AdcF64DcEE4d6b867a6f9",
+      "hat": "0x06851b5235Cefb29C60EF3b29EB1f661D960B125",
+      "live": 1,
+      "GOV": "0x56072C95FAA701256059aa122697B133aDEd9279",
+      "IOU": "ERROR: ('execution reverted', '0x')"
+    },
+    "mcd_esm": {
+      "address": "0x09e05fF6142F2f9de8B6B65855A1d56B6cfE4c58",
+      "min": 115792089237316195423570985008687907853269984665640564039457584007913129639935,
+      "Sum": 1305868205053200,
+      "fired": "ERROR: ('execution reverted', '0x')"
+    },
+    "sky_token": {
+      "address": "0x56072C95FAA701256059aa122697B133aDEd9279",
+      "name": "SKY Governance Token",
+      "symbol": "SKY",
+      "decimals": 18,
+      "totalSupply": 23462665147365966560979671451
+    },
+    "usds_token": {
+      "address": "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
+      "name": "USDS Stablecoin",
+      "symbol": "USDS",
+      "decimals": 18,
+      "totalSupply": 8014628508819391746073055948
+    }
+  },
+  "gmx_v2": {
+    "roles": {
+      "ROLE_ADMIN": {
+        "hash": "0x56908b85b56869d7c69cd020749874f238259af9646ca930287866cdd660b7d9",
+        "count": 3,
+        "members": [
+          "0x4bd1cdAab4254fC43ef6424653cA2375b4C94C0E",
+          "0xC77E6C0ca99E02660A23c00A860Dd5a8912DEaF5",
+          "0x4A1D9e342E2dB5f4a02c9eF5cB29CaF289f31599"
+        ]
+      },
+      "TIMELOCK_ADMIN": {
+        "hash": "0xf49b0c86b385620e25b0985905d1a112a5f1bc1d51a7a292a8cdf112b3a7c47c",
+        "count": 4,
+        "members": [
+          "0x8D1d2e24eC641eDC6a1ebe0F3aE7af0EBC573e0D",
+          "0x35ea3066F90Db13e737BBd41f1ED7B4bfF8323b3",
+          "0xE014cbD60A793901546178E1c16ad9132C927483",
+          "0x58F582455b54d7c83d03BCeed95FAf72B37fdDD7"
+        ]
+      },
+      "CONFIG_KEEPER": {
+        "hash": "0x901fb3de937a1dcb6ecaf26886fda47a088e74f36232a0673eade97079dc225b",
+        "count": 8,
+        "members": [
+          "0x0765678B4f2B45fa9604264a63762E2fE460df64",
+          "0xF09d66CF7dEBcdEbf965F1Ac6527E1Aa5D47A745",
+          "0xc5e038d696d9cB757fFdf53AA34e515D0e42f7cd",
+          "0xB10e24b211D2321B12B21C52EaC38AC6e00799Cc",
+          "0xD5F8b9ba4255B2F73b06f245fcca73D114D1D460",
+          "0x8D1d2e24eC641eDC6a1ebe0F3aE7af0EBC573e0D",
+          "0xF86EF7f0BB90a05A932781C5Cb6eEFe55e486107",
+          "0x4C8569E2F8A8Af32E0464E53d76449Ca7a004baF"
+        ]
+      },
+      "MARKET_KEEPER": {
+        "hash": "0xd66692c70b60cf1337e643d6a6473f6865d8c03f3c26b460df3d19b504fb46ae",
+        "count": 6,
+        "members": [
+          "0x0765678B4f2B45fa9604264a63762E2fE460df64",
+          "0xF09d66CF7dEBcdEbf965F1Ac6527E1Aa5D47A745",
+          "0xD5F8b9ba4255B2F73b06f245fcca73D114D1D460",
+          "0xF86EF7f0BB90a05A932781C5Cb6eEFe55e486107",
+          "0xB10e24b211D2321B12B21C52EaC38AC6e00799Cc",
+          "0xc5e038d696d9cB757fFdf53AA34e515D0e42f7cd"
+        ]
+      },
+      "ORDER_KEEPER": {
+        "hash": "0x40a07f8f0fc57fcf18b093d96362a8e661eaac7b7e6edbf66f242111f83a6794",
+        "count": 27,
+        "members": [
+          "0xE47b36382DC50b90bCF6176Ddb159C4b9333A7AB",
+          "0xC539cB358a58aC67185BaAD4d5E3f7fCfc903700",
+          "0xf1e1B2F4796d984CCb8485d43db0c64B83C1FA6d",
+          "0xE0886d9baAaD385F37d460A4ec7b32b79a3731e0",
+          "0x5051FD154320584c9Cc2071aed772656E8fcd855",
+          "0x49d30B3035c647BF57f3845DA287bD84d80bDa2C",
+          "0x8e36C6106B053aD32D20a426f3faF2d32b49cFBd",
+          "0x0BA63427862eBEc8492d0236EEc065D6f9978ad6",
+          "0xbD88efB162a4157d5B223Bc99CE1bc80E740152f",
+          "0xcc25DCe071B75196D27aD95906dbfA45218d5eC6",
+          "0xdE10336a5C37Ab8FBfd6cd53bdECa5b0974737ba",
+          "0xeB2a53FF17a747B6000041FB4919B3250f2892E3",
+          "0x8808c5E5Bc9317Bf8cb5eE62339594b8d95f77df",
+          "0x8E66ee36F2C7B9461F50aA0b53eF0E4e47F4ABBf",
+          "0x6A2B3A13be0c723674BCfd722d4e133b3f356e05",
+          "0xDd5c59B7C4e8faD38732caffbeBd20a61bf9F3FC",
+          "0xEB2bB25dDd2B1872D5189Ae72fCeC9b160dD3FB2",
+          "0xa17A86388BBcE9fd73a67F66D87FB0222A824c3f",
+          "0x86fe53a6D47d9a0fDEA4C5Ac3D80E0E6CC3354cc",
+          "0x8E2e2Dd583e7DB8437164A7F89A7288b999253CB",
+          "0xC0a53a9Ee8E8ea0f585d8DcF26800EF2841f97fD",
+          "0xd316a0043056fb787dE34ABA8cd5323f5C6f8c47",
+          "0xB874e07336Edc0c278C276FfEb08818976099256",
+          "0xa5E4a14CaB506bA102977648317E0622cA60BB64",
+          "0xdAD787D5a86f37a5E480e35b3Ca615D46242Ce9B",
+          "0x56a7CE61D8aB46A27De1837ceddd8522D52D2736",
+          "0xC9A5775951F0ea25053fEe81D935FBBF4F0Fb273"
+        ]
+      }
+    },
+    "timelock": {
+      "error": "no holder responded to getMinDelay()"
+    },
+    "multisigs": {
+      "0x8D1d2e24eC641eDC6a1ebe0F3aE7af0EBC573e0D": {
+        "address": "0x8D1d2e24eC641eDC6a1ebe0F3aE7af0EBC573e0D",
+        "threshold": 5,
+        "signers": [
+          "0xD7941C4Ca57a511F21853Bbc7FBF8149d5eCb398",
+          "0x32660E5Fe1C5d10330c019Df4eb522A78c1EC896",
+          "0x25B889f14B9E5bB65F97b456dcd1ce8a5ab0D855",
+          "0xd32b86F984254246005a1c1c5e0b6A48743Ddc93",
+          "0x49C9F377d48c417FEB1f4fb32BF2D9Eb04112Da3",
+          "0x9fCA624E05EfA27205e905a40f9cEE9cb455D890",
+          "0xeAA5600595a64a23480b2DF5FCA35A2867c912Ea",
+          "0xFbf5dC7C8911Bf3434e855374eC81414E44E2b12"
+        ],
+        "signer_count": 8
+      },
+      "0x58F582455b54d7c83d03BCeed95FAf72B37fdDD7": {
+        "address": "0x58F582455b54d7c83d03BCeed95FAf72B37fdDD7",
+        "threshold": 4,
+        "signers": [
+          "0x615C95DFc2531a32f7016D784AbAc0baa094051c",
+          "0x2503b5aFbe622f791Dc8c4aBd1fCC44dcDDc1C92",
+          "0x002f59f0A6ca14ced0773Cc136b48b1Ee018Bc9D",
+          "0x936C5aFFec6628B1F6594f6373526F1fCaEA2a4e",
+          "0xc22aDD51C031516079Cdb355B3676CeF202Fb590",
+          "0xeAA5600595a64a23480b2DF5FCA35A2867c912Ea"
+        ],
+        "signer_count": 6
+      }
+    }
+  },
+  "solana": {
+    "jitosol_pool": {
+      "stake_pool": "Jito4APyf642JPZPx3hGc6WWJ8zPKtRbRs4P815Awbb",
+      "owner_program": "SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy",
+      "account_type": 1,
+      "manager": "5eosrve6LktMZgVNszYzebgmmC7BjLK8NoWyRQtcmGTF",
+      "staker": "9BAmGVLGxzqct6bkgjWmKSv3BFB6iKYXNBQp8GWG1LDY",
+      "stake_deposit_authority": "6hg6RMfjn3QSW6MdjH2Dg3dhF9XsVEE8CQXhjYwkRCiK"
+    },
+    "jito_squads_multisig": {
+      "multisig": "5eosrve6LktMZgVNszYzebgmmC7BjLK8NoWyRQtcmGTF",
+      "owner_program": "11111111111111111111111111111111",
+      "kind": "eoa_wallet",
+      "data_len": 0
+    },
+    "spl_stake_pool_program": {
+      "program_id": "SPoo1Ku8WFXoNDMHPsrGSTSG1Y47rzgn41SLUNakuHy",
+      "programdata": "EmiU8AQkB2sswTxVB6aCmsAJftoowZGGDXuytm6X65R3",
+      "last_deploy_slot": 370300186,
+      "upgrade_authority": "dPpFfahSWhm5M2RB3nVaHsXfnh9ooz5bWtR3WeUguDH"
+    },
+    "spl_ecosystem_committee": {
+      "multisig": "dPpFfahSWhm5M2RB3nVaHsXfnh9ooz5bWtR3WeUguDH",
+      "owner_program": "11111111111111111111111111111111",
+      "kind": "eoa_wallet",
+      "data_len": 0
+    },
+    "jupiter_program": {
+      "program_id": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+      "programdata": "4Ec7ZxZS6Sbdg5UGSLHbAnM7GQHp2eFd4KYWRexAipQT",
+      "last_deploy_slot": 416195140,
+      "upgrade_authority": "CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ",
+      "expected_authority": "7ZyDFzet6sKgZLN4D89JLfo7chu2n7nYdkFt5RCFk8Sf",
+      "matches_expected": false
+    },
+    "realms_search": {
+      "skipped": true,
+      "reason": "getProgramAccounts on SPL Governance program is too heavy for public RPCs; verify via realms.today UI or a paid indexer (Helius/Triton).",
+      "spl_governance_program": "GovER5Lthms3bLBqWub97yVrMmEogzX7xNjdXpPPCVZw"
+    }
+  }
+}

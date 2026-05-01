@@ -1,0 +1,194 @@
+{
+  "identity": {
+    "slug": "sky-protocol",
+    "name": "Sky (formerly MakerDAO)",
+    "category": "stablecoin",
+    "parent_protocol": null,
+    "market_id": null,
+    "primary_chain": "ethereum",
+    "website": "https://sky.money",
+    "docs": "https://docs.makerdao.com",
+    "chains": [
+      {
+        "chain_id": "ethereum",
+        "deployment_block": null,
+        "contracts": {
+          "sky_token": "0x56072C95FAA701256059aa122697B133aDEd9279",
+          "mkr_token_legacy": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",
+          "usds_token": "0xdC035D45d973E3EC169d2276DDab16f1e407384F",
+          "dai_token_legacy": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+          "chief_v2_sky": "0x929d9A1435662357F54AdcF64DcEE4d6b867a6f9",
+          "vote_delegate_factory": "0x4Cf3DaeFA2683Cd18df00f7AFF5169C00a9EccD5",
+          "mkr_to_sky_converter": "0xA1Ea1bA18E88C381C724a75F23a130420C403f9a",
+          "lockstake_migrator": "0x473d777f608C3C24B441AB6bD4bBcA6b7F9AF90B",
+          "sky_osm_scribe": "0x511485bBd96e7e3a056a8D1b84C5071071C52D6F",
+          "spark_proxy": "0xC40611AC4Fff8572Dc5F02A238176edCF15Ea7ba",
+          "_note": "MCD_PAUSE_PROXY (the central upgrade execution contract) and other historical Maker addresses are extensive. See the Chainlog (https://chainlog.makerdao.com) for the canonical authoritative address registry. This is unique to Sky/Maker \u2014 the Chainlog itself is an on-chain registry of all important contract addresses, governed by Spells. Indexer should consume the Chainlog directly rather than maintaining a static address list."
+        }
+      },
+      {
+        "chain_id": "solana",
+        "deployment_block": null,
+        "contracts": {
+          "_note": "USDS deployed to Solana in 2025. Cross-chain stablecoin via canonical bridge. Solana-side admin is separate and not yet mapped here."
+        }
+      }
+    ]
+  },
+  "tvl_context": {
+    "tvl_usd": null,
+    "tvl_source": "defillama",
+    "as_of": null
+  },
+  "admin_surface": [
+    {
+      "role": "chief_hat",
+      "scope": "The DSChief contract elects a 'hat' via approval voting. The current hat is whichever address has the most SKY tokens approving it. The hat IS the protocol's authority \u2014 it can call Pause to schedule actions. Approval voting is unique: voters can vote for multiple candidates simultaneously without splitting their voting weight. SKY voters control the hat, which is typically a Spell contract scheduled to execute specific actions.",
+      "controller_type": "dao",
+      "controller": {
+        "address": "0x929d9A1435662357F54AdcF64DcEE4d6b867a6f9",
+        "chain": "ethereum",
+        "dao": {
+          "kind": "custom",
+          "voting_token": "0x56072C95FAA701256059aa122697B133aDEd9279",
+          "quorum": "n/a (continuous approval voting)",
+          "voting_delay_blocks": 0,
+          "voting_period_blocks": 0,
+          "proposal_threshold": "n/a (any SKY can be voted)",
+          "_note": "DSChief uses approval voting, not proposal-based voting. Any address can be voted for; voters can support multiple candidates with their full SKY weight. The address with the most SKY voting for it becomes the 'hat' and gains authority. Critical failure mode: when voters move support between Spells, there's a brief window where small SKY amounts can lift a random hat. The community has historically maintained governance security by keeping the Spell address as the hat with overwhelming support. This is the most purely on-chain token-bound governance of any protocol mapped \u2014 no multisig executes anything; the SKY token weight directly elects the executor."
+        }
+      },
+      "_governance_observation": "Sky/Maker is the most purely token-bound DAO of any protocol in this analysis. There is NO multisig in the critical upgrade path \u2014 SKY holders elect Spells via Chief; Spells get hat status; Spells can call Pause; Pause executes after delay. The only multisigs in the system are core unit operational wallets (e.g. Spark Proxy 0xC40611AC4Fff8572Dc5F02A238176edCF15Ea7ba) which themselves are subject to authorization by passed Spells. Compromise model: requires majority SKY voting power, which has economic cost.",
+      "last_changed_block": null,
+      "last_changed_tx": null
+    },
+    {
+      "role": "ds_pause",
+      "scope": "The Pause contract (ds-pause / GSM Pause) is a delegatecall-based proxy that enforces a configurable delay between scheduling and execution of any privileged action. All upgrades, parameter changes, contract authorizations, and SubDAO interactions route through Pause. Currently configured to a 24-hour delay (was 48h prior to September 2024). Cannot be bypassed \u2014 there is no emergency execution path.",
+      "controller_type": "timelock",
+      "controller": {
+        "address": "0xbE286431454714F511008713973d3B053A2d38f3",
+        "chain": "ethereum",
+        "timelock": {
+          "delay_seconds": 86400,
+          "proposer_role": "chief_hat (current Spell)",
+          "executor_role": "anyone (after delay)",
+          "canceller_role": "n/a (cannot cancel scheduled actions)",
+          "can_bypass": false,
+          "_note": "24-hour delay (86400 seconds). Reduced from 48 hours. Per Maker docs: 'There is no way to bypass the delay. The code executed by the delegatecall cannot directly modify storage on the pause. The pause will always retain ownership of its proxy.' This is the strongest no-bypass guarantee of any timelock mapped \u2014 even the Community Multisig escape hatches in EigenLayer don't exist here. Once a Spell is scheduled, the 24-hour clock runs deterministically."
+        }
+      }
+    },
+    {
+      "role": "esm_emergency_shutdown_module",
+      "scope": "HISTORICAL: The ESM was the canonical emergency mechanism for MakerDAO. Anyone could deposit MKR; once a threshold was reached, Emergency Shutdown triggered immediately, settling all CDPs and giving collateral back to depositors at the Target Price. STATUS AS OF MAY 2025: DISABLED. Phase One of MKR-to-SKY Endgame disabled the ESM by setting the trigger threshold to infinity, making it impossible to invoke. Sky/Maker now operates without an emergency shutdown mechanism.",
+      "controller_type": "immutable",
+      "controller": {
+        "address": "0x09e05fF6142F2f9de8B6B65855A1d56B6cfE4c58",
+        "chain": "ethereum",
+        "_note": "Verified on-chain: ESM at 0x09e05fF6142F2f9de8B6B65855A1d56B6cfE4c58 with min() = 2^256-1 (max uint256). Triggering is mathematically impossible \u2014 would require depositing more SKY than has ever existed. Sum field shows 1305868205053200 of historical deposits (the original ESM had real activity). The contract still exists on-chain but is permanently inert by design. This is the cleanest example of `deactivated_emergency_capability` pattern that should be a v0.3+ schema field."
+      },
+      "_schema_observation": "This is the first mapping where a protocol DELIBERATELY DISABLED an emergency mechanism. The dashboard should distinguish between (a) protocol never had an emergency mechanism, (b) protocol has an active emergency mechanism, (c) protocol DEACTIVATED an emergency mechanism. Status (c) is materially different \u2014 it represents a governance choice to trade off safety for ongoing-governance commitment. Worth a v0.3 schema field: emergency_status enum."
+    },
+    {
+      "role": "spark_proxy",
+      "scope": "Authority to update Spark protocol parameters (Sub-DAO of Sky). Spark is a fork of Aave V3 deployed by MakerDAO that uses Maker collateral for lending. Spark Proxy is a standard contract owned by Sky governance \u2014 only authorized via Spells passed through main Chief.",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "0xC40611AC4Fff8572Dc5F02A238176edCF15Ea7ba",
+        "chain": "ethereum",
+        "multisig": {
+          "kind": "gnosis_safe",
+          "threshold": null,
+          "signers": null,
+          "signer_count": null,
+          "_note": "Spark Proxy is the operational interface for the Spark SubDAO. It IS controlled by Sky governance via main Chief \u2014 Spells authorize the proxy to perform specific actions. This is structurally different from Sub-DAOs that have their own independent governance. Spark's authority can be revoked or re-delegated by any Spell that passes Sky governance."
+        }
+      }
+    },
+    {
+      "role": "grove_proxy",
+      "scope": "Equivalent to Spark Proxy but for Grove SubDAO. Same model: authorized via Sky governance Spells.",
+      "controller_type": "multisig",
+      "controller": {
+        "address": "unverified:grove proxy runtime lookup",
+        "chain": "ethereum",
+        "_note": "Per recent (Feb 2026) executive proposals, Grove is an active SubDAO alongside Spark. Address requires runtime lookup."
+      }
+    }
+  ],
+  "upgrade_paths": [
+    {
+      "mechanism": "transparent_proxy",
+      "proxy": "unverified:pause proxy",
+      "implementation": "via_spells",
+      "admin": "chief_hat (winning Spell)",
+      "delay_seconds": 86400,
+      "guarded_by_dao": true,
+      "_note": "Sky/Maker upgrades are unique: there is no traditional 'implementation contract swap.' Instead, SKY holders elect a Spell via Chief; the Spell gets hat status; the hat schedules execution via Pause with 30h delay; after delay anyone executes. The Spell's code can do anything authorized by the wider Maker system \u2014 modify parameters, authorize new contracts, add collateral types, even rewire core authorities. This is upgrade-via-vote rather than upgrade-via-proxy-admin."
+    }
+  ],
+  "emergency_controls": [],
+  "_emergency_controls_note": "AS OF MAY 2025: Sky/Maker has NO operational emergency control mechanism. The ESM was disabled in the MKR-to-SKY Endgame Phase One. There is no pause function, no kill switch, no multisig-held emergency authority. Any incident response must go through normal Spell governance with the 24-hour Pause delay. Per Maker docs, this delay 'cannot be bypassed.' Risk implication: Sky has the strongest no-backdoor guarantee of any protocol mapped, but also the slowest emergency response. A critical bug discovered today cannot be fixed for at least 24 hours. This is a deliberate Endgame design choice \u2014 trading off recovery speed for governance integrity.",
+  "timelocks": [
+    {
+      "address": "0xbE286431454714F511008713973d3B053A2d38f3",
+      "delay_seconds": 86400,
+      "protected_actions": [
+        "all parameter changes",
+        "all contract authorizations",
+        "all collateral type changes",
+        "all stability fee changes",
+        "all SubDAO authorizations"
+      ],
+      "bypass_paths": [],
+      "_note": "24 hours. No bypass. All protocol changes route through this single contract. Strongest no-bypass guarantee of any protocol mapped. The trade-off: no fast emergency response capability."
+    }
+  ],
+  "oracles": [
+    {
+      "feed": "Sky_OSM_Scribe",
+      "provider": "internal",
+      "address": "0x511485bBd96e7e3a056a8D1b84C5071071C52D6F",
+      "admin": "OSM_MOM_via_chief",
+      "fallback": null,
+      "staleness_threshold_seconds": null,
+      "_note": "Oracle Security Module wraps underlying price feeds (Chronicle Scribe is Maker's own oracle, originally based on the Maker Oracle V2 architecture). OSM enforces a 1-hour delay on price updates flowing into the protocol \u2014 separate from Pause delay. Admin via OSM_MOM (Mother of Mom) which is itself authorized by Chief governance. Multiple Mom contracts (CLIPPER_MOM, OSM_MOM, etc) provide narrowly-scoped emergency parameter adjustments without going through full Pause delay \u2014 these are limited, well-defined actions only, not full upgrade authority."
+    }
+  ],
+  "meta": {
+    "schema_version": "0.2",
+    "last_indexed_block": {
+      "ethereum": null,
+      "solana": null
+    },
+    "last_full_audit": null,
+    "_governance_observation": "Sky/Maker is the cleanest token-bound DAO of any protocol mapped. NO multisig is in the critical upgrade path. SKY holders directly elect executors via Chief approval voting. The 24-hour Pause delay is non-bypassable. Emergency Shutdown was deliberately disabled in May 2025, removing the only fast-response mechanism. The trade-off this represents \u2014 strongest governance integrity vs. slowest emergency response \u2014 is a major dashboard finding.",
+    "_governance_binding_for_dashboard": "token_bound_dao \u2014 fifth confirmation. Sky is the strongest example. Other token-bound DAOs (Aave, Curve, Lido, Uniswap) all have multisig elements (guardian multisigs, emergency executors, custodian multisigs) somewhere in the trust chain. Sky has none.",
+    "_v0_3_candidates_observation": "Sky introduces a new pattern worth flagging: deactivated_emergency_capability. Previously had ESM, deliberately disabled. The schema's existing is_one_shot/expires_at fields don't capture 'governance disabled this' \u2014 a v0.3 emergency_status enum would. Lower priority than the already-locked candidates; can wait for v0.4.",
+    "_subdao_architecture_note": "Sky uses SubDAO architecture (Spark, Grove, others planned). Each SubDAO has operational autonomy via dedicated Proxy contracts but ultimate authorization flows through main Sky Chief. This is structurally similar to Aave V3's market_id pattern (which v0.2 added) \u2014 Spark could be modeled as a child record with parent_protocol='sky-protocol' and market_id='spark'. Worth doing if/when Spark is mapped separately.",
+    "_lessons_from_endgame_transition": "Sky completed major architectural changes in 2024-2025: (1) MKR \u2192 SKY token at 1:24,000 ratio, (2) DAI \u2192 USDS rebrand with cross-chain Solana deployment, (3) ESM disabled, (4) New Chief contract launched, (5) MKR Flop auctions disabled, (6) Multiple SubDAOs spun up with their own governance. The dashboard should reflect that protocols can undergo MAJOR governance changes that materially alter their risk profile. Sky's score today is meaningfully different from Sky's score in 2023 (which still had ESM and DAI as primary stablecoin).",
+    "sources": [
+      {
+        "type": "docs",
+        "url": "https://docs.makerdao.com/smart-contract-modules/governance-module"
+      },
+      {
+        "type": "docs",
+        "url": "https://makerdao.com/da/whitepaper/"
+      },
+      {
+        "type": "official_proposal",
+        "url": "https://vote.makerdao.com/executive/template-executive-vote-mkr-to-sky-upgrade-phase-one-adding-protego-to-the-chainlog-spark-proxy-spell-may-15-2025"
+      },
+      {
+        "type": "third_party",
+        "url": "https://messari.io/project/sky-protocol/profile"
+      },
+      {
+        "type": "chainlog",
+        "url": "https://chainlog.makerdao.com"
+      }
+    ]
+  }
+}
