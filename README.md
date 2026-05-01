@@ -149,6 +149,14 @@ A high DPRI score is a necessary-but-not-sufficient signal for trusting a protoc
 
 ---
 
+## On scope, scoring, and the protocols ranked here
+
+- DPRI is a methodology, not a judgment. The scores are mechanical outputs of the published rubric applied to observable on-chain state. They are not opinions about whether a protocol is trustworthy, well-designed, or worth using. A protocol can score in band D under v0.1 methodology and still be the right tool for many use cases, the score tells you something specific about its on-chain governance trust model, not about its overall quality, security, or value.
+- Methodology v0.1 has documented limitations. It does not weight blast radius, which under-scores stateless protocols (aggregators, routers) relative to custodial protocols at equivalent governance maturity. It does not reward non-bypassable timelock guarantees, which under-scores Sky's design. It treats unverified data conservatively (scoring at zero where confirmation is unavailable), which can produce floor estimates that rise meaningfully once verification gaps close. These limitations are publicly documented in the CHANGELOG and will be addressed in v0.2. Until then, scores should be read alongside the per-protocol JSON, which contains the underlying facts and any verification caveats.
+- If on-chain state in a protocol JSON does not match what's actually on-chain at the block you read it at, that is an error and I want to fix it. Open an issue or a PR with the discrepancy and I will update the data within the week. Protocol teams who disagree with a methodology choice are welcome to open issues describing what they would change and what protocols would re-rank as a result; methodology debates are expected and welcome. The goal of publishing the methodology is to make the work auditable, not to make it final.
+
+---
+
 ## How to read a protocol JSON
 
 Every protocol JSON has the same structure:
